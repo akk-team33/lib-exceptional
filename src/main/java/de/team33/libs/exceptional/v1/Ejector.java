@@ -36,6 +36,10 @@ public class Ejector<X extends Throwable> {
         get(wrap(runnable));
     }
 
+    /**
+     * Runs a supplier. If a WrappedException occurs, which contains an exception of the associated type,
+     * it will be "ejected" (unwrapped and rethrown).
+     */
     public final <T> T get(final Supplier<T> supplier) throws X {
         try {
             return supplier.get();
