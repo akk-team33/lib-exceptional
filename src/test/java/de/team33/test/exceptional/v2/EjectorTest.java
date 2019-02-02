@@ -1,14 +1,14 @@
-package de.team33.test.exceptional.v1;
+package de.team33.test.exceptional.v2;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import de.team33.libs.exceptional.v1.ExpectationException;
-import de.team33.libs.exceptional.v1.WrappedException;
+import de.team33.libs.exceptional.v2.ExpectationException;
+import de.team33.libs.exceptional.v2.WrappedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import static de.team33.libs.exceptional.v1.Ejector.eject;
+import static de.team33.libs.exceptional.v2.Ejector.eject;
 import static org.junit.Assert.assertNotNull;
 
 

@@ -1,4 +1,4 @@
-package de.team33.libs.exceptional.v1;
+package de.team33.libs.exceptional.v2;
 
 public class ExpectationException extends RuntimeException {
 

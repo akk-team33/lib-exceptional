@@ -1,4 +1,4 @@
-package de.team33.libs.exceptional.v1;
+package de.team33.libs.exceptional.v2;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

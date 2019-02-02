@@ -1,4 +1,4 @@
-package de.team33.libs.exceptional.v1;
+package de.team33.libs.exceptional.v2;
 
 /**
  * A RuntimeException used to transport checked exceptions where it is not allowed to throw or pass them.
