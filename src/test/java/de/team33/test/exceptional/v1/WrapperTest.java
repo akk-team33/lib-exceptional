@@ -1,26 +1,22 @@
 package de.team33.test.exceptional.v1;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.team33.libs.exceptional.v1.Expector;
+import de.team33.libs.exceptional.v1.Ejector;
 import de.team33.libs.exceptional.v1.WrappedException;
 import de.team33.libs.exceptional.v1.Wrapper;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
-import static de.team33.libs.exceptional.v1.Expector.expect;
-import static de.team33.libs.exceptional.v1.Wrapper.runnable;
+import static de.team33.libs.exceptional.v1.Ejector.eject;
 import static org.junit.Assert.*;
 
 
 public class WrapperTest {
 
-    private static final Expector<IOException> EXPECT_IOX = expect(IOException.class);
+    private static final Ejector<IOException> EXPECT_IOX = eject(IOException.class);
 
     private static String tryString(final boolean success) throws IOException {
         if (success) {

@@ -4,35 +4,36 @@ import java.util.function.Supplier;
 
 
 /**
- * Expects a specific exception type wrapped as a {@link WrappedException}.
+ * Ejects a specific exception type wrapped in a {@link WrappedException}.
  */
-public class Expector<X extends Throwable> {
+public class Ejector<X extends Throwable> {
 
     private final Class<X> xClass;
 
-    private Expector(final Class<X> xClass) {
+    private Ejector(final Class<X> xClass) {
         this.xClass = xClass;
     }
 
     /**
-     * Provides a new instance that expects a given exception type.
+     * Supplies a new instance that ejects a given exception type.
      */
-    public static <T extends Throwable> Expector<T> expect(final Class<T> xClass) {
-        return new Expector<>(xClass);
+    public static <T extends Throwable> Ejector<T> eject(final Class<T> xClass) {
+        return new Ejector<>(xClass);
     }
 
-    /**
-     * Führt ein
-     */
-    public final void run(final Runnable runnable) throws X {
-        get(wrap(runnable));
-    }
-
-    private Supplier<Object> wrap(final Runnable runnable) {
+    private Supplier<Void> wrap(final Runnable runnable) {
         return () -> {
             runnable.run();
             return null;
         };
+    }
+
+    /**
+     * Runs a runnable. If a WrappedException occurs, which contains an exception of the associated type,
+     * it will be "ejected" (unwrapped and rethrown).
+     */
+    public final void run(final Runnable runnable) throws X {
+        get(wrap(runnable));
     }
 
     public final <T> T get(final Supplier<T> supplier) throws X {

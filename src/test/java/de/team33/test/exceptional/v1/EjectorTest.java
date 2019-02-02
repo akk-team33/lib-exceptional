@@ -8,30 +8,30 @@ import de.team33.libs.exceptional.v1.WrappedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import static de.team33.libs.exceptional.v1.Expector.expect;
+import static de.team33.libs.exceptional.v1.Ejector.eject;
 import static org.junit.Assert.assertNotNull;
 
 
-public class ExpectorTest {
+public class EjectorTest {
 
     @Test(expected = IOException.class)
     public void runException() throws IOException {
-        expect(IOException.class).run(this::throwWrappedIOException);
+        eject(IOException.class).run(this::throwWrappedIOException);
     }
 
     @Test(expected = ExpectationException.class)
     public void runUnexpected() throws SAXException {
-        expect(SAXException.class).run(this::throwWrappedIOException);
+        eject(SAXException.class).run(this::throwWrappedIOException);
     }
 
     @Test(expected = IOException.class)
     public void getException() throws IOException {
-        expect(IOException.class).get(this::throwWrappedIOException);
+        eject(IOException.class).get(this::throwWrappedIOException);
     }
 
     @Test
     public void getString() throws IOException {
-        assertNotNull(expect(IOException.class).get(this::getAString));
+        assertNotNull(eject(IOException.class).get(this::getAString));
     }
 
     private String getAString() {
