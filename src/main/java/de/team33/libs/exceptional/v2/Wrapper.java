@@ -1,5 +1,7 @@
 package de.team33.libs.exceptional.v2;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -8,11 +10,11 @@ import java.util.function.Supplier;
 /**
  * A tool that can turn certain functional constructs into others.
  */
-public class Wrapper<T, R, X extends Exception> {
+public class Wrapper<T, U, R, X extends Exception> {
 
-    private final XFunction<T, R, ?> delegate;
+    private final XBiFunction<T, U, R, ?> delegate;
 
-    private Wrapper(final XFunction<T, R, ?> delegate) {
+    private Wrapper(final XBiFunction<T, U, R, ?> delegate) {
         this.delegate = delegate;
     }
 
@@ -33,6 +35,14 @@ public class Wrapper<T, R, X extends Exception> {
     }
 
     /**
+     * Wraps an {@link XBiConsumer} as {@link BiConsumer} that, when executed, wraps any occurring
+     * checked exception as {@link WrappedException}.
+     */
+    public static <T, U> BiConsumer<T, U> biConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
+        return new Wrapper<>(toXFunction(xBiConsumer)).toBiConsumer();
+    }
+
+    /**
      * Wraps an {@link XSupplier} as {@link Supplier} that, when executed, wraps any occurring
      * checked exception as {@link WrappedException}.
      */
@@ -45,48 +55,75 @@ public class Wrapper<T, R, X extends Exception> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, R> Function<T, R> function(final XFunction<T, R, ?> xFunction) {
-        return new Wrapper<>(xFunction).toFunction();
+        return new Wrapper<>(toXFunction(xFunction)).toFunction();
     }
 
-    private static <X extends Exception> XFunction<Void, Void, X> toXFunction(final XRunnable<X> xRunnable) {
-        return t -> {
+    /**
+     * Wraps an {@link XBiFunction} as {@link BiFunction} that, when executed, wraps any occurring
+     * checked exception as {@link WrappedException}.
+     */
+    public static <T, U, R> BiFunction<T, U, R> biFunction(final XBiFunction<T, U, R, ?> xBiFunction) {
+        return new Wrapper<>(xBiFunction).toBiFunction();
+    }
+
+    private static <X extends Exception> XBiFunction<Void, Void, Void, X> toXFunction(final XRunnable<X> xRunnable) {
+        return (t, u) -> {
             xRunnable.run();
             return null;
         };
     }
 
-    private static <T, X extends Exception> XFunction<T, Void, X> toXFunction(final XConsumer<T, X> xConsumer) {
-        return t -> {
+    private static <T, X extends Exception> XBiFunction<T, Void, Void, X> toXFunction(final XConsumer<T, X> xConsumer) {
+        return (t, u) -> {
             xConsumer.accept(t);
             return null;
         };
     }
 
-    private static <T, X extends Exception> XFunction<Void, T, X> toXFunction(final XSupplier<T, X> xSupplier) {
-        return t -> xSupplier.get();
+    private static <T, U, X extends Exception> XBiFunction<T, U, Void, X> toXFunction(final XBiConsumer<T, U, X> xBiConsumer) {
+        return (t, u) -> {
+            xBiConsumer.accept(t, u);
+            return null;
+        };
     }
 
-    private R exec(final T t) {
+    private static <T, X extends Exception> XBiFunction<Void, Void, T, X> toXFunction(final XSupplier<T, X> xSupplier) {
+        return (t, u) -> xSupplier.get();
+    }
+
+    private static <T, R, X extends Exception> XBiFunction<T, Void, R, X> toXFunction(final XFunction<T, R, X> xFunction) {
+        return (t, u) -> xFunction.apply(t);
+    }
+
+    private R exec(final T t, final U u) {
         try {
-            return delegate.apply(t);
+            return delegate.apply(t, u);
         } catch (final Exception caught) {
             throw new WrappedException(caught);
         }
     }
 
     private Runnable toRunnable() {
-        return () -> exec(null);
+        return () -> exec(null, null);
     }
 
     private Consumer<T> toConsumer() {
+        return t -> exec(t, null);
+    }
+
+    private BiConsumer<T, U> toBiConsumer() {
         return this::exec;
     }
 
     private Supplier<R> toSupplier() {
-        return () -> exec(null);
+        return () -> exec(null, null);
     }
 
     private Function<T, R> toFunction() {
+        return t -> exec(t, null);
+    }
+
+    private BiFunction<T, U, R> toBiFunction() {
         return this::exec;
     }
 }

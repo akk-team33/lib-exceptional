@@ -3,16 +3,16 @@ package de.team33.libs.exceptional.v2;
 /**
  * A kind of function that allows to throw a checked exception.
  *
- * @see java.util.function.Function
+ * @see java.util.function.BiFunction
  */
 @FunctionalInterface
-public interface XFunction<T, R, X extends Exception> {
+public interface XBiFunction<T, U, R, X extends Exception> {
 
     /**
      * Performs this operation on the given argument.
      *
      * @throws X if so.
-     * @see java.util.function.Function#apply(Object)
+     * @see java.util.function.BiFunction#apply(Object, Object)
      */
-    R apply(T t) throws X;
+    R apply(T t, U u) throws X;
 }
