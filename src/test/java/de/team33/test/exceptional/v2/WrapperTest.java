@@ -5,18 +5,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.team33.libs.exceptional.v2.Ejector;
+import de.team33.libs.exceptional.v2.Inspector;
 import de.team33.libs.exceptional.v2.WrappedException;
 import de.team33.libs.exceptional.v2.Wrapper;
 import org.junit.Test;
 
-import static de.team33.libs.exceptional.v2.Ejector.eject;
+import static de.team33.libs.exceptional.v2.Inspector.expect;
 import static org.junit.Assert.*;
 
 
 public class WrapperTest {
 
-    private static final Ejector<IOException> EXPECT_IOX = eject(IOException.class);
+    private static final Inspector<IOException> EXPECT_IOX = expect(IOException.class);
 
     private static String tryString(final boolean success) throws IOException {
         if (success) {
