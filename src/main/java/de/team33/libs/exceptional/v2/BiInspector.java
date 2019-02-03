@@ -4,22 +4,25 @@ import java.util.function.Supplier;
 
 
 /**
- * Can execute methods that may throw a {@link WrappedException}, which in turn carries a checked Exception of a certain
- * type. If this is the case, the latter is unwrapped and thrown again.
+ * Can execute methods that may throw a {@link WrappedException}, which in turn carries a checked Exception of certain
+ * types. If this is the case, the latter is unwrapped and thrown again.
  */
-public class Inspector<X extends Throwable> {
+public class BiInspector<X extends Throwable, Y extends Throwable> {
 
     private final Class<X> xClass;
+    private final Class<Y> yClass;
 
-    private Inspector(final Class<X> xClass) {
+    private BiInspector(final Class<X> xClass, final Class<Y> yClass) {
         this.xClass = xClass;
+        this.yClass = yClass;
     }
 
     /**
-     * Returns a new instance that handles a given exception type (wrapped in a {@link WrappedException}).
+     * Returns a new instance that handles given exception types (wrapped in a {@link WrappedException}).
      */
-    public static <T extends Throwable> Inspector<T> expect(final Class<T> xClass) {
-        return new Inspector<>(xClass);
+    public static <X extends Throwable, Y extends Throwable> BiInspector<X, Y> expect(final Class<X> xClass,
+                                                                                      final Class<Y> yClass) {
+        return new BiInspector<X, Y>(xClass, yClass);
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {
@@ -41,7 +44,7 @@ public class Inspector<X extends Throwable> {
      * @throws WrappedException if the runnable causes a {@link WrappedException} that cannot be unwrapped in any
      *                          of the above ways
      */
-    public final void run(final Runnable runnable) throws X {
+    public final void run(final Runnable runnable) throws X, Y {
         get(wrap(runnable));
     }
 
@@ -57,14 +60,15 @@ public class Inspector<X extends Throwable> {
      * @throws WrappedException if the supplier causes a {@link WrappedException} that cannot be unwrapped in any
      *                          of the above ways
      */
-    public final <T> T get(final Supplier<T> supplier) throws X {
+    public final <T> T get(final Supplier<T> supplier) throws X, Y {
         try {
             return supplier.get();
         } catch (final WrappedException caught) {
             throw caught
                     .reThrowCauseIf(Error.class)
                     .reThrowCauseIf(RuntimeException.class)
-                    .reThrowCauseIf(xClass);
+                    .reThrowCauseIf(xClass)
+                    .reThrowCauseIf(yClass);
         }
     }
 }
