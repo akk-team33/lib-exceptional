@@ -98,6 +98,8 @@ public class Wrapper<T, U, R, X extends Exception> {
     private R exec(final T t, final U u) {
         try {
             return delegate.apply(t, u);
+        } catch (final RuntimeException caught) {
+            throw caught;
         } catch (final Exception caught) {
             throw new WrappedException(caught);
         }
