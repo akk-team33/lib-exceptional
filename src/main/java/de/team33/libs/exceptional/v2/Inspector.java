@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 
 
 /**
- * Can execute methods that may throw a {@link WrappedException}, which in turn carries a checked Exception of
- * a certain type. If this is the case, the latter will be unwrapped and thrown again.
+ * A Tool that can execute methods that may throw a {@link WrappedException} based on a checked Exception of
+ * a certain type. If this is the case, the latter will be unwrapped and re-thrown.
  */
 public class Inspector<X extends Throwable> {
 
