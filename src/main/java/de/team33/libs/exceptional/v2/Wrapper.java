@@ -8,7 +8,8 @@ import java.util.function.Supplier;
 
 
 /**
- * A tool that can turn certain functional constructs into others.
+ * A tool that can turn certain functional constructs that may throw checked exceptions into others that do
+ * not.
  */
 public class Wrapper<T, U, R> {
 
