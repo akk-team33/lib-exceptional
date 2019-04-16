@@ -24,7 +24,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static Runnable runnable(final XRunnable<?> xRunnable) {
-        return new Wrapper<>(toXFunction(xRunnable)).toRunnable();
+        return new Wrapper<>(toBiFunction(xRunnable)).toRunnable();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T> Consumer<T> consumer(final XConsumer<T, ?> xConsumer) {
-        return new Wrapper<>(toXFunction(xConsumer)).toConsumer();
+        return new Wrapper<>(toBiFunction(xConsumer)).toConsumer();
     }
 
     /**
@@ -40,7 +40,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, U> BiConsumer<T, U> biConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
-        return new Wrapper<>(toXFunction(xBiConsumer)).toBiConsumer();
+        return new Wrapper<>(toBiFunction(xBiConsumer)).toBiConsumer();
     }
 
     /**
@@ -48,7 +48,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <R> Supplier<R> supplier(final XSupplier<R, ?> xSupplier) {
-        return new Wrapper<>(toXFunction(xSupplier)).toSupplier();
+        return new Wrapper<>(toBiFunction(xSupplier)).toSupplier();
     }
 
     /**
@@ -56,7 +56,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, R> Function<T, R> function(final XFunction<T, R, ?> xFunction) {
-        return new Wrapper<>(toXFunction(xFunction)).toFunction();
+        return new Wrapper<>(toBiFunction(xFunction)).toFunction();
     }
 
     /**
@@ -67,32 +67,32 @@ public class Wrapper<T, U, R> {
         return new Wrapper<>(xBiFunction).toBiFunction();
     }
 
-    private static <X extends Exception> XBiFunction<Void, Void, Void, X> toXFunction(final XRunnable<X> xRunnable) {
+    private static XBiFunction<Void, Void, Void, ?> toBiFunction(final XRunnable<?> xRunnable) {
         return (t, u) -> {
             xRunnable.run();
             return null;
         };
     }
 
-    private static <T, X extends Exception> XBiFunction<T, Void, Void, X> toXFunction(final XConsumer<T, X> xConsumer) {
+    private static <T> XBiFunction<T, Void, Void, ?> toBiFunction(final XConsumer<T, ?> xConsumer) {
         return (t, u) -> {
             xConsumer.accept(t);
             return null;
         };
     }
 
-    private static <T, U, X extends Exception> XBiFunction<T, U, Void, X> toXFunction(final XBiConsumer<T, U, X> xBiConsumer) {
+    private static <T, U> XBiFunction<T, U, Void, ?> toBiFunction(final XBiConsumer<T, U, ?> xBiConsumer) {
         return (t, u) -> {
             xBiConsumer.accept(t, u);
             return null;
         };
     }
 
-    private static <T, X extends Exception> XBiFunction<Void, Void, T, X> toXFunction(final XSupplier<T, X> xSupplier) {
+    private static <T> XBiFunction<Void, Void, T, ?> toBiFunction(final XSupplier<T, ?> xSupplier) {
         return (t, u) -> xSupplier.get();
     }
 
-    private static <T, R, X extends Exception> XBiFunction<T, Void, R, X> toXFunction(final XFunction<T, R, X> xFunction) {
+    private static <T, R> XBiFunction<T, Void, R, ?> toBiFunction(final XFunction<T, R, ?> xFunction) {
         return (t, u) -> xFunction.apply(t);
     }
 
