@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 /**
  * A tool that can turn certain functional constructs into others.
  */
-public class Wrapper<T, U, R, X extends Exception> {
+public class Wrapper<T, U, R> {
 
     private final XBiFunction<T, U, R, ?> delegate;
 
