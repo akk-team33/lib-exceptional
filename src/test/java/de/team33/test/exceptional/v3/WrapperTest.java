@@ -3,18 +3,18 @@ package de.team33.test.exceptional.v3;
 import java.io.IOException;
 import java.util.UUID;
 
-import de.team33.libs.exceptional.v3.Inspector;
+import de.team33.libs.exceptional.v3.Exposer;
 import de.team33.libs.exceptional.v3.WrappedException;
 import de.team33.libs.exceptional.v3.Wrapper;
 import org.junit.Test;
 
-import static de.team33.libs.exceptional.v3.Inspector.expect;
+import static de.team33.libs.exceptional.v3.Exposer.expect;
 import static org.junit.Assert.*;
 
 
 public class WrapperTest {
 
-    private static final Inspector<IOException> EXPECT_IOX = expect(IOException.class);
+    private static final Exposer<IOException> EXPECT_IOX = expect(IOException.class);
 
     private static String tryString(final boolean success) throws IOException {
         if (success) {

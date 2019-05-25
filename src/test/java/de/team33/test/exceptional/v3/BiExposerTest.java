@@ -7,10 +7,10 @@ import org.xml.sax.SAXException;
 import java.awt.AWTException;
 import java.io.IOException;
 
-import static de.team33.libs.exceptional.v3.BiInspector.expect;
+import static de.team33.libs.exceptional.v3.BiExposer.expect;
 
 
-public class BiInspectorTest {
+public class BiExposerTest {
 
     @Test(expected = IOException.class)
     public void runIOException() throws IOException, AWTException {

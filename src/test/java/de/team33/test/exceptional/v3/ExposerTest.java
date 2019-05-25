@@ -6,10 +6,10 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 
-import static de.team33.libs.exceptional.v3.Inspector.expect;
+import static de.team33.libs.exceptional.v3.Exposer.expect;
 
 
-public class InspectorTest {
+public class ExposerTest {
 
     @Test(expected = IOException.class)
     public void runException() throws IOException {

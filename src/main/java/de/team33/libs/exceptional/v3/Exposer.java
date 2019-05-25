@@ -7,22 +7,22 @@ import java.util.function.Supplier;
  * A Tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
  * a certain type. If this is the case, the latter will be unwrapped and re-thrown.
  *
- * @see BiInspector
- * @see TriInspector
+ * @see BiExposer
+ * @see TriExposer
  */
-public class Inspector<X extends Throwable> {
+public class Exposer<X extends Throwable> {
 
     private final Class<X> xClass;
 
-    private Inspector(final Class<X> xClass) {
+    private Exposer(final Class<X> xClass) {
         this.xClass = xClass;
     }
 
     /**
      * Returns a new instance that handles a given exception type (when wrapped in a {@link WrappedException}).
      */
-    public static <T extends Throwable> Inspector<T> expect(final Class<T> xClass) {
-        return new Inspector<>(xClass);
+    public static <T extends Throwable> Exposer<T> expect(final Class<T> xClass) {
+        return new Exposer<>(xClass);
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {

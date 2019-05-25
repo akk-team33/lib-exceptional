@@ -8,10 +8,10 @@ import java.awt.AWTException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static de.team33.libs.exceptional.v3.TriInspector.expect;
+import static de.team33.libs.exceptional.v3.TriExposer.expect;
 
 
-public class TriInspectorTest {
+public class TriExposerTest {
 
     @Test(expected = IOException.class)
     public void runIOException() throws IOException, AWTException, SQLException {

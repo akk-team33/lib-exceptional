@@ -7,16 +7,16 @@ import java.util.function.Supplier;
  * A Tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
  * certain types. If this is the case, the latter will be unwrapped and re-thrown.
  *
- * @see Inspector
- * @see BiInspector
+ * @see Exposer
+ * @see BiExposer
  */
-public class TriInspector<X extends Throwable, Y extends Throwable, Z extends Throwable> {
+public class TriExposer<X extends Throwable, Y extends Throwable, Z extends Throwable> {
 
     private final Class<X> xClass;
     private final Class<Y> yClass;
     private final Class<Z> zClass;
 
-    private TriInspector(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass) {
+    private TriExposer(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass) {
         this.xClass = xClass;
         this.yClass = yClass;
         this.zClass = zClass;
@@ -28,10 +28,10 @@ public class TriInspector<X extends Throwable, Y extends Throwable, Z extends Th
     public static <
             X extends Throwable,
             Y extends Throwable,
-            Z extends Throwable> TriInspector<X, Y, Z> expect(final Class<X> xClass,
-                                                              final Class<Y> yClass,
-                                                              final Class<Z> zClass) {
-        return new TriInspector<X, Y, Z>(xClass, yClass, zClass);
+            Z extends Throwable> TriExposer<X, Y, Z> expect(final Class<X> xClass,
+                                                            final Class<Y> yClass,
+                                                            final Class<Z> zClass) {
+        return new TriExposer<X, Y, Z>(xClass, yClass, zClass);
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {
