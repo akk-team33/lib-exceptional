@@ -11,11 +11,11 @@ import java.util.function.Supplier;
  * A tool that can turn certain functional constructs that may throw checked exceptions into others that do
  * not.
  */
-public class Wrapper<T, U, R> {
+public class Wrapping<T, U, R> {
 
     private final XBiFunction<T, U, R, ?> delegate;
 
-    private Wrapper(final XBiFunction<T, U, R, ?> delegate) {
+    private Wrapping(final XBiFunction<T, U, R, ?> delegate) {
         this.delegate = delegate;
     }
 
@@ -24,7 +24,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static Runnable runnable(final XRunnable<?> xRunnable) {
-        return new Wrapper<>(toBiFunction(xRunnable)).toRunnable();
+        return new Wrapping<>(toBiFunction(xRunnable)).toRunnable();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T> Consumer<T> consumer(final XConsumer<T, ?> xConsumer) {
-        return new Wrapper<>(toBiFunction(xConsumer)).toConsumer();
+        return new Wrapping<>(toBiFunction(xConsumer)).toConsumer();
     }
 
     /**
@@ -40,7 +40,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, U> BiConsumer<T, U> biConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
-        return new Wrapper<>(toBiFunction(xBiConsumer)).toBiConsumer();
+        return new Wrapping<>(toBiFunction(xBiConsumer)).toBiConsumer();
     }
 
     /**
@@ -48,7 +48,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <R> Supplier<R> supplier(final XSupplier<R, ?> xSupplier) {
-        return new Wrapper<>(toBiFunction(xSupplier)).toSupplier();
+        return new Wrapping<>(toBiFunction(xSupplier)).toSupplier();
     }
 
     /**
@@ -56,7 +56,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, R> Function<T, R> function(final XFunction<T, R, ?> xFunction) {
-        return new Wrapper<>(toBiFunction(xFunction)).toFunction();
+        return new Wrapping<>(toBiFunction(xFunction)).toFunction();
     }
 
     /**
@@ -64,7 +64,7 @@ public class Wrapper<T, U, R> {
      * checked exception as {@link WrappedException}.
      */
     public static <T, U, R> BiFunction<T, U, R> biFunction(final XBiFunction<T, U, R, ?> xBiFunction) {
-        return new Wrapper<>(xBiFunction).toBiFunction();
+        return new Wrapping<>(xBiFunction).toBiFunction();
     }
 
     private static XBiFunction<Void, Void, Void, ?> toBiFunction(final XRunnable<?> xRunnable) {

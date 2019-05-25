@@ -5,14 +5,14 @@ import java.util.UUID;
 
 import de.team33.libs.exceptional.v3.Exposer;
 import de.team33.libs.exceptional.v3.WrappedException;
-import de.team33.libs.exceptional.v3.Wrapper;
+import de.team33.libs.exceptional.v3.Wrapping;
 import org.junit.Test;
 
 import static de.team33.libs.exceptional.v3.Exposer.expose;
 import static org.junit.Assert.*;
 
 
-public class WrapperTest {
+public class WrappingTest {
 
     private static final Exposer<IOException> EXPECT_IOX = expose(IOException.class);
 
@@ -27,7 +27,7 @@ public class WrapperTest {
     @Test
     public void runnable() {
         try {
-            Wrapper.runnable(() -> tryString(false)).run();
+            Wrapping.runnable(() -> tryString(false)).run();
             fail("expected to fail but worked");
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
@@ -37,7 +37,7 @@ public class WrapperTest {
     @Test
     public void consumer() {
         try {
-            Wrapper.consumer(t -> tryString(false)).accept(null);
+            Wrapping.consumer(t -> tryString(false)).accept(null);
             fail("expected to fail but worked");
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
@@ -47,7 +47,7 @@ public class WrapperTest {
     @Test
     public void biConsumer() {
         try {
-            Wrapper.biConsumer((t, u) -> tryString(false)).accept(null, null);
+            Wrapping.biConsumer((t, u) -> tryString(false)).accept(null, null);
             fail("expected to fail but worked");
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
@@ -57,7 +57,7 @@ public class WrapperTest {
     @Test
     public void supplier() {
         try {
-            final String result = Wrapper.supplier(() -> tryString(false)).get();
+            final String result = Wrapping.supplier(() -> tryString(false)).get();
             fail("expected to fail but was " + result);
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
@@ -67,7 +67,7 @@ public class WrapperTest {
     @Test
     public void function() {
         try {
-            final String result = Wrapper.function(t -> tryString(false)).apply(null);
+            final String result = Wrapping.function(t -> tryString(false)).apply(null);
             fail("expected to fail but was " + result);
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
@@ -77,7 +77,7 @@ public class WrapperTest {
     @Test
     public void biFunction() {
         try {
-            final String result = Wrapper.biFunction((t, u) -> tryString(false)).apply(null, null);
+            final String result = Wrapping.biFunction((t, u) -> tryString(false)).apply(null, null);
             fail("expected to fail but was " + result);
         } catch (WrappedException e) {
             assertEquals(IOException.class, e.getCause().getClass());
