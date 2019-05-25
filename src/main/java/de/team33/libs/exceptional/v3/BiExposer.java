@@ -23,7 +23,7 @@ public class BiExposer<X extends Throwable, Y extends Throwable> {
     /**
      * Returns a new instance that handles given exception types (when wrapped in a {@link WrappedException}).
      */
-    public static <X extends Throwable, Y extends Throwable> BiExposer<X, Y> expect(final Class<X> xClass,
+    public static <X extends Throwable, Y extends Throwable> BiExposer<X, Y> expose(final Class<X> xClass,
                                                                                     final Class<Y> yClass) {
         return new BiExposer<X, Y>(xClass, yClass);
     }

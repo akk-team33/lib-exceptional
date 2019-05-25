@@ -21,7 +21,7 @@ public class Exposer<X extends Throwable> {
     /**
      * Returns a new instance that handles a given exception type (when wrapped in a {@link WrappedException}).
      */
-    public static <T extends Throwable> Exposer<T> expect(final Class<T> xClass) {
+    public static <T extends Throwable> Exposer<T> expose(final Class<T> xClass) {
         return new Exposer<>(xClass);
     }
 

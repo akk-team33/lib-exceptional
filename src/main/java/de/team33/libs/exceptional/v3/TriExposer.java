@@ -28,7 +28,7 @@ public class TriExposer<X extends Throwable, Y extends Throwable, Z extends Thro
     public static <
             X extends Throwable,
             Y extends Throwable,
-            Z extends Throwable> TriExposer<X, Y, Z> expect(final Class<X> xClass,
+            Z extends Throwable> TriExposer<X, Y, Z> expose(final Class<X> xClass,
                                                             final Class<Y> yClass,
                                                             final Class<Z> zClass) {
         return new TriExposer<X, Y, Z>(xClass, yClass, zClass);

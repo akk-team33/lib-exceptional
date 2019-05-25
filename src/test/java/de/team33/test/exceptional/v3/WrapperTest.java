@@ -8,13 +8,13 @@ import de.team33.libs.exceptional.v3.WrappedException;
 import de.team33.libs.exceptional.v3.Wrapper;
 import org.junit.Test;
 
-import static de.team33.libs.exceptional.v3.Exposer.expect;
+import static de.team33.libs.exceptional.v3.Exposer.expose;
 import static org.junit.Assert.*;
 
 
 public class WrapperTest {
 
-    private static final Exposer<IOException> EXPECT_IOX = expect(IOException.class);
+    private static final Exposer<IOException> EXPECT_IOX = expose(IOException.class);
 
     private static String tryString(final boolean success) throws IOException {
         if (success) {
