@@ -1,12 +1,12 @@
-package de.team33.test.exceptional.v2;
+package de.team33.test.exceptional.v3;
 
-import de.team33.libs.exceptional.v2.WrappedException;
+import de.team33.libs.exceptional.v3.WrappedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 
-import static de.team33.libs.exceptional.v2.Inspector.expect;
+import static de.team33.libs.exceptional.v3.Inspector.expect;
 
 
 public class InspectorTest {

@@ -1,4 +1,4 @@
-package de.team33.libs.exceptional.v2;
+package de.team33.libs.exceptional.v3;
 
 /**
  * A kind of runnable that allows to throw a checked exception.

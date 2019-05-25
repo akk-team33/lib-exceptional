@@ -1,28 +1,31 @@
-package de.team33.libs.exceptional.v2;
+package de.team33.libs.exceptional.v3;
 
 import java.util.function.Supplier;
 
 
 /**
  * A Tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
- * a certain type. If this is the case, the latter will be unwrapped and re-thrown.
+ * certain types. If this is the case, the latter will be unwrapped and re-thrown.
  *
- * @see BiInspector
+ * @see Inspector
  * @see TriInspector
  */
-public class Inspector<X extends Throwable> {
+public class BiInspector<X extends Throwable, Y extends Throwable> {
 
     private final Class<X> xClass;
+    private final Class<Y> yClass;
 
-    private Inspector(final Class<X> xClass) {
+    private BiInspector(final Class<X> xClass, final Class<Y> yClass) {
         this.xClass = xClass;
+        this.yClass = yClass;
     }
 
     /**
-     * Returns a new instance that handles a given exception type (when wrapped in a {@link WrappedException}).
+     * Returns a new instance that handles given exception types (when wrapped in a {@link WrappedException}).
      */
-    public static <T extends Throwable> Inspector<T> expect(final Class<T> xClass) {
-        return new Inspector<>(xClass);
+    public static <X extends Throwable, Y extends Throwable> BiInspector<X, Y> expect(final Class<X> xClass,
+                                                                                      final Class<Y> yClass) {
+        return new BiInspector<X, Y>(xClass, yClass);
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {
@@ -37,6 +40,8 @@ public class Inspector<X extends Throwable> {
      *
      * @throws X                if the runnable causes a {@link WrappedException}, which in turn is caused by
      *                          an exception of type X
+     * @throws Y                if the runnable causes a {@link WrappedException}, which in turn is caused by
+     *                          an exception of type Y
      * @throws Error            if the runnable causes an {@link Error} or a {@link WrappedException},
      *                          which in turn is caused by an {@link Error}
      * @throws RuntimeException if the runnable causes a {@link RuntimeException} or a
@@ -44,7 +49,7 @@ public class Inspector<X extends Throwable> {
      * @throws WrappedException if the runnable causes a {@link WrappedException} that cannot be unwrapped in
      *                          any of the above ways
      */
-    public final void run(final Runnable runnable) throws X {
+    public final void run(final Runnable runnable) throws X, Y {
         get(wrap(runnable));
     }
 
@@ -53,6 +58,8 @@ public class Inspector<X extends Throwable> {
      *
      * @throws X                if the supplier causes a {@link WrappedException}, which in turn is caused by
      *                          an exception of type X
+     * @throws Y                if the supplier causes a {@link WrappedException}, which in turn is caused by
+     *                          an exception of type Y
      * @throws Error            if the supplier causes an {@link Error} or a {@link WrappedException},
      *                          which in turn is caused by an {@link Error}
      * @throws RuntimeException if the supplier causes a {@link RuntimeException} or a
@@ -60,14 +67,15 @@ public class Inspector<X extends Throwable> {
      * @throws WrappedException if the supplier causes a {@link WrappedException} that cannot be unwrapped in
      *                          any of the above ways
      */
-    public final <T> T get(final Supplier<T> supplier) throws X {
+    public final <T> T get(final Supplier<T> supplier) throws X, Y {
         try {
             return supplier.get();
         } catch (final WrappedException caught) {
             throw caught
                     .reThrowCauseIf(Error.class)
                     .reThrowCauseIf(RuntimeException.class)
-                    .reThrowCauseIf(xClass);
+                    .reThrowCauseIf(xClass)
+                    .reThrowCauseIf(yClass);
         }
     }
 }

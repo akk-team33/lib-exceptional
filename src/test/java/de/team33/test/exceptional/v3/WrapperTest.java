@@ -1,16 +1,14 @@
-package de.team33.test.exceptional.v2;
+package de.team33.test.exceptional.v3;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import de.team33.libs.exceptional.v2.Inspector;
-import de.team33.libs.exceptional.v2.WrappedException;
-import de.team33.libs.exceptional.v2.Wrapper;
+import de.team33.libs.exceptional.v3.Inspector;
+import de.team33.libs.exceptional.v3.WrappedException;
+import de.team33.libs.exceptional.v3.Wrapper;
 import org.junit.Test;
 
-import static de.team33.libs.exceptional.v2.Inspector.expect;
+import static de.team33.libs.exceptional.v3.Inspector.expect;
 import static org.junit.Assert.*;
 
 

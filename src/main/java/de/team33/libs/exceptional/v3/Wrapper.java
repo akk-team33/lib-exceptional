@@ -1,4 +1,4 @@
-package de.team33.libs.exceptional.v2;
+package de.team33.libs.exceptional.v3;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

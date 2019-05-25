@@ -1,6 +1,6 @@
-package de.team33.test.exceptional.v2;
+package de.team33.test.exceptional.v3;
 
-import de.team33.libs.exceptional.v2.WrappedException;
+import de.team33.libs.exceptional.v3.WrappedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -8,7 +8,7 @@ import java.awt.AWTException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static de.team33.libs.exceptional.v2.TriInspector.expect;
+import static de.team33.libs.exceptional.v3.TriInspector.expect;
 
 
 public class TriInspectorTest {
