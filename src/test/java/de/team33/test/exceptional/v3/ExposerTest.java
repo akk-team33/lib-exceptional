@@ -12,28 +12,28 @@ import static de.team33.libs.exceptional.v3.Exposer.expose;
 public class ExposerTest {
 
     @Test(expected = IOException.class)
-    public void runException() throws IOException {
+    public final void runException() throws IOException {
         expose(IOException.class).run(() -> {
             throw new WrappedException(new IOException());
         });
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void runRuntimeException() throws IOException {
+    public final void runRuntimeException() throws IOException {
         expose(IOException.class).run(() -> {
             throw new WrappedException(new IllegalArgumentException());
         });
     }
 
     @Test(expected = OutOfMemoryError.class)
-    public void runError() throws IOException {
+    public final void runError() throws IOException {
         expose(IOException.class).run(() -> {
             throw new WrappedException(new OutOfMemoryError());
         });
     }
 
     @Test(expected = WrappedException.class)
-    public void runUnexpected() throws IOException {
+    public final void runUnexpected() throws IOException {
         expose(IOException.class).run(() -> {
             throw new WrappedException(new SAXException());
         });

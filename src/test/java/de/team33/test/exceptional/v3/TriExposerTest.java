@@ -14,42 +14,42 @@ import static de.team33.libs.exceptional.v3.TriExposer.expose;
 public class TriExposerTest {
 
     @Test(expected = IOException.class)
-    public void runIOException() throws IOException, AWTException, SQLException {
+    public final void runIOException() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new IOException());
         });
     }
 
     @Test(expected = AWTException.class)
-    public void runAWTException() throws IOException, AWTException, SQLException {
+    public final void runAWTException() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new AWTException(""));
         });
     }
 
     @Test(expected = SQLException.class)
-    public void runSQLException() throws IOException, AWTException, SQLException {
+    public final void runSQLException() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new SQLException());
         });
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void runRuntimeException() throws IOException, AWTException, SQLException {
+    public final void runRuntimeException() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new IllegalArgumentException());
         });
     }
 
     @Test(expected = OutOfMemoryError.class)
-    public void runError() throws IOException, AWTException, SQLException {
+    public final void runError() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new OutOfMemoryError());
         });
     }
 
     @Test(expected = WrappedException.class)
-    public void runUnexpected() throws IOException, AWTException, SQLException {
+    public final void runUnexpected() throws Exception {
         expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
             throw new WrappedException(new SAXException());
         });

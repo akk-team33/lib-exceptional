@@ -12,6 +12,9 @@ public class WrappedException extends RuntimeException {
         super(cause.getMessage(), cause);
     }
 
+    /**
+     * Initializes a new instance.
+     */
     public WrappedException(final String message, final Throwable cause) {
         super(message, cause);
     }
@@ -21,10 +24,8 @@ public class WrappedException extends RuntimeException {
      * Otherwise it returns this WrappedException.
      */
     public final <X extends Throwable> WrappedException reThrowCauseIf(final Class<X> xClass) throws X {
-        final Throwable cause = getCause();
-        if (xClass.isInstance(cause)) {
-            throw xClass.cast(cause);
-        }
-        return this;
+        return new Sampler<>(this)
+                .reThrowCauseIf(xClass)
+                .retrieve();
     }
 }
