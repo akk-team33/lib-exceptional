@@ -4,13 +4,13 @@ import java.util.function.Supplier;
 
 
 /**
- * A Tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
+ * A tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
  * a certain type. If this is the case, the latter will be unwrapped and re-thrown.
  *
  * @see BiExposer
  * @see TriExposer
  */
-public class Exposer<X extends Throwable> {
+public final class Exposer<X extends Throwable> {
 
     private final Class<X> xClass;
 

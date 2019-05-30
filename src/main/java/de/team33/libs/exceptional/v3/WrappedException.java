@@ -12,6 +12,10 @@ public class WrappedException extends RuntimeException {
         super(cause.getMessage(), cause);
     }
 
+    public WrappedException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
     /**
      * Rethrows the cause of this WrappedException if it matches the given exception type.
      * Otherwise it returns this WrappedException.
