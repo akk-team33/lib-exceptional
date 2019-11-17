@@ -27,8 +27,8 @@ public class BiExposerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public final void runRuntimeException() throws Exception {
-        expose(IOException.class, AWTException.class).run(() -> {
+    public final void getRuntimeException() throws Exception {
+        expose(IOException.class, AWTException.class).get(() -> {
             throw new WrappedException(new IllegalArgumentException());
         });
     }
@@ -41,8 +41,8 @@ public class BiExposerTest {
     }
 
     @Test(expected = WrappedException.class)
-    public final void runUnexpected() throws Exception {
-        expose(IOException.class, AWTException.class).run(() -> {
+    public final void getUnexpected() throws Exception {
+        expose(IOException.class, AWTException.class).get(() -> {
             throw new WrappedException(new SAXException());
         });
     }

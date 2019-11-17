@@ -42,15 +42,15 @@ public class TriExposerTest {
     }
 
     @Test(expected = OutOfMemoryError.class)
-    public final void runError() throws Exception {
-        expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
+    public final void getError() throws Exception {
+        expose(IOException.class, AWTException.class, SQLException.class).get(() -> {
             throw new WrappedException(new OutOfMemoryError());
         });
     }
 
     @Test(expected = WrappedException.class)
-    public final void runUnexpected() throws Exception {
-        expose(IOException.class, AWTException.class, SQLException.class).run(() -> {
+    public final void getUnexpected() throws Exception {
+        expose(IOException.class, AWTException.class, SQLException.class).get(() -> {
             throw new WrappedException(new SAXException());
         });
     }

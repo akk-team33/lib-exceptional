@@ -19,8 +19,8 @@ public class ExposerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public final void runRuntimeException() throws IOException {
-        expose(IOException.class).run(() -> {
+    public final void getRuntimeException() throws IOException {
+        expose(IOException.class).get(() -> {
             throw new WrappedException(new IllegalArgumentException());
         });
     }
@@ -33,8 +33,8 @@ public class ExposerTest {
     }
 
     @Test(expected = WrappedException.class)
-    public final void runUnexpected() throws IOException {
-        expose(IOException.class).run(() -> {
+    public final void getUnexpected() throws IOException {
+        expose(IOException.class).get(() -> {
             throw new WrappedException(new SAXException());
         });
     }
