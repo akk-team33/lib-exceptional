@@ -11,6 +11,6 @@ public class CheckedEnvelope extends Exception {
     }
 
     public Review<CheckedEnvelope> review() {
-        return new Review<>(this);
+        return Review.of(this);
     }
 }

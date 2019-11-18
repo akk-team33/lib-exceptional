@@ -11,6 +11,6 @@ public class RuntimeEnvelope extends RuntimeException {
     }
     
     public Review<RuntimeEnvelope> review() {
-        return new Review<>(this);
+        return Review.of(this);
     }
 }
