@@ -1,5 +1,6 @@
 package de.team33.test.exceptional.v4;
 
+import de.team33.libs.exceptional.v3.XRunnable;
 import de.team33.libs.exceptional.v4.Review;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class ReviewTest {
 
-    private static void getAndThrow(final Supplier<? extends Exception> supplier) throws Exception {
+    private static <X extends Exception> void getAndThrow(final Supplier<X> supplier) throws X {
         throw supplier.get();
     }
 
@@ -49,8 +50,45 @@ public class ReviewTest {
         }
     }
 
+    /**
+     * Test for {@link Review#reThrowCauseIf(Class)}.
+     *
+     * Die Methode dient dazu,
+     */
     @Test
     public void reThrowCauseIf() {
+        final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException(new SubExceptionA());
+        final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException(new SubExceptionB());
+        final List<Supplier<? extends Exception>> newExceptionList = Arrays.asList(
+                newSubExceptionA, newSubExceptionB);
+        for (final Supplier<? extends Exception> newException : newExceptionList) {
+            final XRunnable<SuperException> inner = () -> {
+                try {
+                    getAndThrow(newException);
+                    fail("should not happen");
+                } catch (RuntimeException e) {
+                    Review.of(e)
+                          .reThrowCauseIf(SubExceptionA.class)
+                          .reThrowCauseIf(SubExceptionB.class);
+                    fail("should not happen");
+                } catch (Exception e) {
+                    fail("should not happen");
+                }
+            };
+            try {
+                inner.run();
+            } catch (SubExceptionA subExceptionA) {
+                assertSame(newSubExceptionA, newException);
+            } catch (final SubExceptionB caught) {
+                assertSame(newSubExceptionB, newException);
+            } catch (SuperException e) {
+                fail("should not happen");
+            }
+        }
+    }
+
+    @Test
+    public void reThrowCauseIf0() {
         final Supplier<Exception> newSubExceptionA = () -> new IOException(new SubExceptionA());
         final Supplier<Exception> newSubExceptionB = () -> new IOException(new SubExceptionB());
         final Supplier<Exception> newSubExceptionC = () -> new IOException(new SubExceptionC());
