@@ -1,16 +1,11 @@
 package de.team33.libs.exceptional.v4;
 
-import javax.xml.stream.StreamFilter;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
- * Supports a differentiated handling of an exception.
+ * A tool that supports the differentiated handling of exceptions.
  */
 public class Review<T extends Throwable> {
-
-    private static final Predicate ALWAYS = s -> true;
-    private static final Function KEEP = s -> s;
 
     private final T subject;
     private final Throwable cause;
@@ -20,70 +15,82 @@ public class Review<T extends Throwable> {
         this.cause = subject.getCause();
     }
 
+    /**
+     * Initiates a {@link Review} of the given {@code subject}.
+     */
     public static <T extends Throwable> Review<T> of(final T subject) {
         return new Review<>(subject);
     }
 
-    private static <R> Function<Object, R> cast(final Class<R> rClass) {
-        return rClass::cast;
-    }
-
-    private static <R> Predicate<Object> isInstance(final Class<R> rClass) {
-        return rClass::isInstance;
-    }
-
-    private static <S, X extends Throwable> void throwTransformationIf(final S subject,
-                                                                       final Predicate<S> condition,
-                                                                       final Function<S, X> transformation) throws X {
-        if (condition.test(subject)) {
-            throw transformation.apply(subject);
+    private static <X extends Throwable> void throwIfPresent(final X exception) throws X {
+        if (null != exception) {
+            throw exception;
         }
     }
 
     /**
-     * Throws a transformation of the associated {@code subject} if it matches the given type and the given
-     * {@link Predicate}. Otherwise it returns this {@link Review} for further aspects.
+     * <p>Applies the given {@code mapping} to the {@linkplain #of(Throwable) associated subject} and throws the result
+     * if is it NOT {@code null}. Otherwise this {@link Review} will be returned.</p>
+     *
+     * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
+     * type, e.g. an {@link Exception}. At the same time, a suitable mapping to the respective exception can be
+     * applied with this variant.</p>
+     *
+     * @see #reThrowIf(Class)
      */
-    public final <X extends Throwable> Review<T> throwIf(final Predicate<? super T> condition,
-                                                         final Function<? super T, X> transformation) throws X {
-        if (condition.test(subject)) {
-            throw transformation.apply(subject);
-        }
+    public final <X extends Throwable> Review<T> throwMapped(final Function<? super T, X> mapping) throws X {
+        throwIfPresent(mapping.apply(subject));
         return this;
     }
 
     /**
-     * Throws a transformation of the associated {@code subject} if it matches the given type.
-     * Otherwise it returns this {@link Review} for further aspects.
+     * <p>Re-throws the {@linkplain #of(Throwable) associated subject} if it matches the given exception {@code type}.
+     * Otherwise this {@link Review} will be returned.</p>
+     *
+     * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
+     * type, e.g. an {@link Exception}.</p>
+     *
+     * @see #throwMapped(Function)
      */
-    public final <S, X extends Throwable> Review<T> throwIf(final Class<S> type,
-                                                            final Function<? super S, X> transformation) throws X {
-        final Function<? super S, ? extends X> t = transformation;
-        return throwIf(isInstance(type), cast(type).andThen(t));
-    }
-
-    /**
-     * Re-throws the associated {@code subject} if it matches the given exception type.
-     * Otherwise it returns this {@link Review}.
-     */
-    public final <X extends T> Review<T> reThrowIf(final Class<X> type) throws X {
-        //noinspection unchecked
-        return throwIf(isInstance(type), cast(type));
-    }
-
-    /**
-     * Re-throws the {@link Throwable#getCause() cause} of the associated {@code subject} if it matches the given
-     * exception type. Otherwise it returns this {@link Review}.
-     */
-    public final <X extends Throwable> Review<T> reThrowCauseIf(final Class<X> xClass) throws X {
-        if (xClass.isInstance(cause)) {
-            throw xClass.cast(cause);
-        }
+    public final <X extends Throwable> Review<T> reThrowIf(final Class<X> type) throws X {
+        throwIfPresent(type.isInstance(subject) ? type.cast(subject) : null);
         return this;
     }
 
     /**
-     * Returns the associated {@code subject}.
+     * <p>Applies the given {@code mapping} to the {@link Throwable#getCause() cause} of the
+     * {@linkplain #of(Throwable) associated subject} and throws the result if is it NOT {@code null}.
+     * Otherwise this {@link Review} will be returned.</p>
+     *
+     * <p>This method is used to bring the cause of an exception back to the foreground. For example,
+     * if an exception was previously caught and encapsulated in another exception for technical reasons,
+     * e.g. a {@link RuntimeException}. At the same time, a suitable mapping to the respective exception can be
+     * applied with this variant.</p>
+     *
+     * @see #reThrowCauseIf(Class)
+     */
+    public final <X extends Throwable> Review<T> throwMappedCause(final Function<Throwable, X> mapping) throws X {
+        throwIfPresent(mapping.apply(cause));
+        return this;
+    }
+
+    /**
+     * <p>Re-throws the {@link Throwable#getCause() cause} of the {@linkplain #of(Throwable) associated subject}
+     * if it matches the given exception {@code type}. Otherwise this {@link Review} will be returned.</p>
+     *
+     * <p>This method is used to bring the cause of an exception back to the foreground. For example,
+     * if an exception was previously caught and encapsulated in another exception for technical reasons,
+     * e.g. a {@link RuntimeException}.</p>
+     *
+     * @see #throwMappedCause(Function)
+     */
+    public final <X extends Throwable> Review<T> reThrowCauseIf(final Class<X> type) throws X {
+        throwIfPresent(type.isInstance(cause) ? type.cast(cause) : null);
+        return this;
+    }
+
+    /**
+     * Returns the mapping of associated {@code subject}.
      */
     public final <X extends Throwable> X fallback(final Function<? super T, X> mapping) {
         return mapping.apply(subject);
