@@ -9,8 +9,4 @@ public class CheckedEnvelope extends Exception {
     public CheckedEnvelope(final Throwable cause) {
         super(cause.getMessage(), cause);
     }
-
-    public Review<CheckedEnvelope> review() {
-        return Review.of(this);
-    }
 }
