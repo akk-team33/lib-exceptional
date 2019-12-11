@@ -24,10 +24,8 @@ public class WrappedException extends RuntimeException {
      * Otherwise it returns this WrappedException.
      */
     public final <X extends Throwable> WrappedException reThrowCauseIf(final Class<X> xClass) throws X {
-        final Throwable cause = getCause();
-        if (xClass.isInstance(cause)) {
-            throw xClass.cast(cause);
-        }
-        return this;
+        return Review.of(this)
+                     .reThrowCauseIf(xClass)
+                     .fallback();
     }
 }
