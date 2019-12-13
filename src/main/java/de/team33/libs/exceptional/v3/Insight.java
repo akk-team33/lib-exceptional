@@ -18,7 +18,7 @@ public class Insight<T extends Throwable> {
     /**
      * Initiates a {@link Insight} of the given {@code subject}.
      */
-    public static <T extends Throwable> Insight<T> of(final T subject) {
+    public static <T extends Throwable> Insight<T> into(final T subject) {
         return new Insight<>(subject);
     }
 
@@ -29,7 +29,7 @@ public class Insight<T extends Throwable> {
     }
 
     /**
-     * <p>Applies the given {@code mapping} to the {@linkplain #of(Throwable) associated subject} and throws the result
+     * <p>Applies the given {@code mapping} to the {@linkplain #into(Throwable) associated subject} and throws the result
      * if is it NOT {@code null}. Otherwise this {@link Insight} will be returned.</p>
      *
      * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
@@ -44,7 +44,7 @@ public class Insight<T extends Throwable> {
     }
 
     /**
-     * <p>Re-throws the {@linkplain #of(Throwable) associated subject} if it matches the given exception {@code type}.
+     * <p>Re-throws the {@linkplain #into(Throwable) associated subject} if it matches the given exception {@code type}.
      * Otherwise this {@link Insight} will be returned.</p>
      *
      * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
@@ -59,7 +59,7 @@ public class Insight<T extends Throwable> {
 
     /**
      * <p>Applies the given {@code mapping} to the {@link Throwable#getCause() cause} of the
-     * {@linkplain #of(Throwable) associated subject} and throws the result if is it NOT {@code null}.
+     * {@linkplain #into(Throwable) associated subject} and throws the result if is it NOT {@code null}.
      * Otherwise this {@link Insight} will be returned.</p>
      *
      * <p>This method is used to bring the cause of an exception back to the foreground. For example,
@@ -75,7 +75,7 @@ public class Insight<T extends Throwable> {
     }
 
     /**
-     * <p>Re-throws the {@link Throwable#getCause() cause} of the {@linkplain #of(Throwable) associated subject}
+     * <p>Re-throws the {@link Throwable#getCause() cause} of the {@linkplain #into(Throwable) associated subject}
      * if it matches the given exception {@code type}. Otherwise this {@link Insight} will be returned.</p>
      *
      * <p>This method is used to bring the cause of an exception back to the foreground. For example,
