@@ -1,6 +1,6 @@
 package de.team33.test.exceptional.v3;
 
-import de.team33.libs.exceptional.v3.Review;
+import de.team33.libs.exceptional.v3.Insight;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
-public class ReviewTest {
+public class InsightTest {
 
     private static <X extends Exception> void getAndThrow(final Supplier<X> supplier) throws X {
         throw supplier.get();
@@ -36,16 +36,16 @@ public class ReviewTest {
                     getAndThrow(newException);
                     fail("should not happen");
                 } catch (RuntimeException caught) {
-                    Review.of(caught)
-                          .throwMapped(subject -> Optional.of(subject)
+                    Insight.of(caught)
+                           .throwMapped(subject -> Optional.of(subject)
                                                           .filter(equalsMessage("SubExceptionA"))
                                                           .map(SubExceptionA::new)
                                                           .orElse(null))
-                          .throwMapped(subject -> Optional.of(subject)
+                           .throwMapped(subject -> Optional.of(subject)
                                                           .filter(equalsMessage("SubExceptionB"))
                                                           .map(SubExceptionB::new)
                                                           .orElse(null))
-                          .throwMapped(subject -> Optional.of(subject)
+                           .throwMapped(subject -> Optional.of(subject)
                                                           .filter(equalsMessage("SubExceptionC"))
                                                           .map(SubExceptionC::new)
                                                           .orElse(null));
@@ -75,10 +75,10 @@ public class ReviewTest {
                     getAndThrow(newException);
                     fail("should not happen");
                 } catch (Exception caught) {
-                    Review.of(caught)
-                          .reThrowIf(SubExceptionA.class)
-                          .reThrowIf(SubExceptionB.class)
-                          .reThrowIf(SubExceptionC.class);
+                    Insight.of(caught)
+                           .reThrowIf(SubExceptionA.class)
+                           .reThrowIf(SubExceptionB.class)
+                           .reThrowIf(SubExceptionC.class);
                     assertSame(newIOException, newException);
                 }
             } catch (SubExceptionA caught) {
@@ -105,16 +105,16 @@ public class ReviewTest {
                     getAndThrow(newException);
                     fail("should not happen");
                 } catch (RuntimeException caught) {
-                    Review.of(caught)
-                          .throwMappedCause(cause -> Optional.of(cause)
+                    Insight.of(caught)
+                           .throwMappedCause(cause -> Optional.of(cause)
                                                              .filter(equalsMessage("SubExceptionA"))
                                                              .map(SubExceptionA::new)
                                                              .orElse(null))
-                          .throwMappedCause(cause -> Optional.of(cause)
+                           .throwMappedCause(cause -> Optional.of(cause)
                                                              .filter(equalsMessage("SubExceptionB"))
                                                              .map(SubExceptionB::new)
                                                              .orElse(null))
-                          .throwMappedCause(cause -> Optional.of(cause)
+                           .throwMappedCause(cause -> Optional.of(cause)
                                                              .filter(equalsMessage("SubExceptionC"))
                                                              .map(SubExceptionC::new)
                                                              .orElse(null));
@@ -144,10 +144,10 @@ public class ReviewTest {
                     getAndThrow(newException);
                     fail("should not happen");
                 } catch (RuntimeException caught) {
-                    Review.of(caught)
-                          .reThrowCauseIf(SubExceptionA.class)
-                          .reThrowCauseIf(SubExceptionB.class)
-                          .reThrowCauseIf(SubExceptionC.class);
+                    Insight.of(caught)
+                           .reThrowCauseIf(SubExceptionA.class)
+                           .reThrowCauseIf(SubExceptionB.class)
+                           .reThrowCauseIf(SubExceptionC.class);
                     assertSame(newIOException, newException);
                 }
             } catch (SubExceptionA caught) {
