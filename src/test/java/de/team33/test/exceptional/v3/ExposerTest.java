@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import static de.team33.libs.exceptional.v3.Exposer.expose;
 
-
+@Deprecated
 public class ExposerTest {
 
     @Test(expected = IOException.class)

@@ -1,9 +1,10 @@
 package de.team33.libs.exceptional.v3;
 
 /**
- * A RuntimeException used to wrap checked exceptions where it is not allowed to throw or pass them directly.
+ * @deprecated Use {@link RuntimeEnvelope} instead.
  */
-public class WrappedException extends RuntimeException {
+@Deprecated
+public class WrappedException extends RuntimeEnvelope {
 
     /**
      * Initializes a new instance.
@@ -24,7 +25,7 @@ public class WrappedException extends RuntimeException {
      * Otherwise it returns this WrappedException.
      */
     public final <X extends Throwable> WrappedException reThrowCauseIf(final Class<X> xClass) throws X {
-        return Insight.of(this)
+        return Insight.into(this)
                       .reThrowCauseIf(xClass)
                       .fallback();
     }

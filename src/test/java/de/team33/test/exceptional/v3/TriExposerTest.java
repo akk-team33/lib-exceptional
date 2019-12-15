@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 import static de.team33.libs.exceptional.v3.TriExposer.expose;
 
-
+@Deprecated
 public class TriExposerTest {
 
     @Test(expected = IOException.class)

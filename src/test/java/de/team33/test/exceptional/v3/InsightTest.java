@@ -10,8 +10,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
+@SuppressWarnings({"MultipleTopLevelClassesInFile", "NestedTryStatement"})
 public class InsightTest {
 
     private static <X extends Exception> void getAndThrow(final Supplier<X> supplier) throws X {
@@ -23,7 +25,7 @@ public class InsightTest {
     }
 
     @Test
-    public void throwMapped() {
+    public final void throwMapped() {
         final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException("SubExceptionA");
         final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException("SubExceptionB");
         final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException("SubExceptionC");
@@ -35,34 +37,34 @@ public class InsightTest {
                 try {
                     getAndThrow(newException);
                     fail("should not happen");
-                } catch (RuntimeException caught) {
-                    Insight.of(caught)
+                } catch (final RuntimeException caught) {
+                    Insight.into(caught)
                            .throwMapped(subject -> Optional.of(subject)
-                                                          .filter(equalsMessage("SubExceptionA"))
-                                                          .map(SubExceptionA::new)
-                                                          .orElse(null))
+                                                           .filter(equalsMessage("SubExceptionA"))
+                                                           .map(SubExceptionA::new)
+                                                           .orElse(null))
                            .throwMapped(subject -> Optional.of(subject)
-                                                          .filter(equalsMessage("SubExceptionB"))
-                                                          .map(SubExceptionB::new)
-                                                          .orElse(null))
+                                                           .filter(equalsMessage("SubExceptionB"))
+                                                           .map(SubExceptionB::new)
+                                                           .orElse(null))
                            .throwMapped(subject -> Optional.of(subject)
-                                                          .filter(equalsMessage("SubExceptionC"))
-                                                          .map(SubExceptionC::new)
-                                                          .orElse(null));
+                                                           .filter(equalsMessage("SubExceptionC"))
+                                                           .map(SubExceptionC::new)
+                                                           .orElse(null));
                     assertSame(newIOException, newException);
                 }
-            } catch (SubExceptionA caught) {
+            } catch (final SubExceptionA caught) {
                 assertSame(newSubExceptionA, newException);
-            } catch (SubExceptionB caught) {
+            } catch (final SubExceptionB caught) {
                 assertSame(newSubExceptionB, newException);
-            } catch (SubExceptionC caught) {
+            } catch (final SubExceptionC caught) {
                 assertSame(newSubExceptionC, newException);
             }
         }
     }
 
     @Test
-    public void reThrowIf() {
+    public final void reThrowIf() {
         final Supplier<Exception> newSubExceptionA = SubExceptionA::new;
         final Supplier<Exception> newSubExceptionB = SubExceptionB::new;
         final Supplier<Exception> newSubExceptionC = SubExceptionC::new;
@@ -74,64 +76,64 @@ public class InsightTest {
                 try {
                     getAndThrow(newException);
                     fail("should not happen");
-                } catch (Exception caught) {
-                    Insight.of(caught)
+                } catch (final Exception caught) {
+                    Insight.into(caught)
                            .reThrowIf(SubExceptionA.class)
                            .reThrowIf(SubExceptionB.class)
                            .reThrowIf(SubExceptionC.class);
                     assertSame(newIOException, newException);
                 }
-            } catch (SubExceptionA caught) {
+            } catch (final SubExceptionA caught) {
                 assertSame(newSubExceptionA, newException);
-            } catch (SubExceptionB caught) {
+            } catch (final SubExceptionB caught) {
                 assertSame(newSubExceptionB, newException);
-            } catch (SubExceptionC caught) {
+            } catch (final SubExceptionC caught) {
                 assertSame(newSubExceptionC, newException);
             }
         }
     }
 
     @Test
-    public void throwMappedCause() {
-        final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException(new IOException("SubExceptionA"));
-        final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException(new IOException("SubExceptionB"));
-        final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException(new IOException("SubExceptionC"));
-        final Supplier<RuntimeException> newIOException = () -> new RuntimeException(new IOException());
+    public final void throwMappedCause() {
+        final Supplier<RuntimeException> subExceptionA = () -> new RuntimeException(new IOException("SubExceptionA"));
+        final Supplier<RuntimeException> subExceptionB = () -> new RuntimeException(new IOException("SubExceptionB"));
+        final Supplier<RuntimeException> subExceptionC = () -> new RuntimeException(new IOException("SubExceptionC"));
+        final Supplier<RuntimeException> ioException = () -> new RuntimeException(new IOException());
         final List<Supplier<RuntimeException>> newExceptionList = Arrays.asList(
-                newSubExceptionA, newSubExceptionB, newSubExceptionC, newIOException);
+                subExceptionA, subExceptionB, subExceptionC, ioException);
         for (final Supplier<RuntimeException> newException : newExceptionList) {
             try {
                 try {
                     getAndThrow(newException);
                     fail("should not happen");
-                } catch (RuntimeException caught) {
-                    Insight.of(caught)
+                } catch (final RuntimeException caught) {
+                    Insight.into(caught)
                            .throwMappedCause(cause -> Optional.of(cause)
-                                                             .filter(equalsMessage("SubExceptionA"))
-                                                             .map(SubExceptionA::new)
-                                                             .orElse(null))
+                                                              .filter(equalsMessage("SubExceptionA"))
+                                                              .map(SubExceptionA::new)
+                                                              .orElse(null))
                            .throwMappedCause(cause -> Optional.of(cause)
-                                                             .filter(equalsMessage("SubExceptionB"))
-                                                             .map(SubExceptionB::new)
-                                                             .orElse(null))
+                                                              .filter(equalsMessage("SubExceptionB"))
+                                                              .map(SubExceptionB::new)
+                                                              .orElse(null))
                            .throwMappedCause(cause -> Optional.of(cause)
-                                                             .filter(equalsMessage("SubExceptionC"))
-                                                             .map(SubExceptionC::new)
-                                                             .orElse(null));
-                    assertSame(newIOException, newException);
+                                                              .filter(equalsMessage("SubExceptionC"))
+                                                              .map(SubExceptionC::new)
+                                                              .orElse(null));
+                    assertSame(ioException, newException);
                 }
-            } catch (SubExceptionA caught) {
-                assertSame(newSubExceptionA, newException);
-            } catch (SubExceptionB caught) {
-                assertSame(newSubExceptionB, newException);
-            } catch (SubExceptionC caught) {
-                assertSame(newSubExceptionC, newException);
+            } catch (final SubExceptionA caught) {
+                assertSame(subExceptionA, newException);
+            } catch (final SubExceptionB caught) {
+                assertSame(subExceptionB, newException);
+            } catch (final SubExceptionC caught) {
+                assertSame(subExceptionC, newException);
             }
         }
     }
 
     @Test
-    public void reThrowCauseIf() {
+    public final void reThrowCauseIf() {
         final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException(new SubExceptionA());
         final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException(new SubExceptionB());
         final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException(new SubExceptionC());
@@ -143,56 +145,56 @@ public class InsightTest {
                 try {
                     getAndThrow(newException);
                     fail("should not happen");
-                } catch (RuntimeException caught) {
-                    Insight.of(caught)
+                } catch (final RuntimeException caught) {
+                    Insight.into(caught)
                            .reThrowCauseIf(SubExceptionA.class)
                            .reThrowCauseIf(SubExceptionB.class)
                            .reThrowCauseIf(SubExceptionC.class);
                     assertSame(newIOException, newException);
                 }
-            } catch (SubExceptionA caught) {
+            } catch (final SubExceptionA caught) {
                 assertSame(newSubExceptionA, newException);
-            } catch (SubExceptionB caught) {
+            } catch (final SubExceptionB caught) {
                 assertSame(newSubExceptionB, newException);
-            } catch (SubExceptionC caught) {
+            } catch (final SubExceptionC caught) {
                 assertSame(newSubExceptionC, newException);
             }
         }
     }
-}
 
-class SuperException extends Exception {
-    SuperException() {
+    static class SuperException extends Exception {
+        SuperException() {
+        }
+
+        SuperException(final Throwable cause) {
+            super(cause);
+        }
     }
 
-    SuperException(final Throwable cause) {
-        super(cause);
-    }
-}
+    static class SubExceptionA extends SuperException {
+        SubExceptionA() {
+        }
 
-class SubExceptionA extends SuperException {
-    SubExceptionA() {
-    }
-
-    SubExceptionA(final Throwable cause) {
-        super(cause);
-    }
-}
-
-class SubExceptionB extends SuperException {
-    SubExceptionB() {
+        SubExceptionA(final Throwable cause) {
+            super(cause);
+        }
     }
 
-    SubExceptionB(final Throwable cause) {
-        super(cause);
-    }
-}
+    static class SubExceptionB extends SuperException {
+        SubExceptionB() {
+        }
 
-class SubExceptionC extends SuperException {
-    SubExceptionC() {
+        SubExceptionB(final Throwable cause) {
+            super(cause);
+        }
     }
 
-    SubExceptionC(final Throwable cause) {
-        super(cause);
+    static class SubExceptionC extends SuperException {
+        SubExceptionC() {
+        }
+
+        SubExceptionC(final Throwable cause) {
+            super(cause);
+        }
     }
 }

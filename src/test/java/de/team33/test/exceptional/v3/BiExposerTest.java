@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static de.team33.libs.exceptional.v3.BiExposer.expose;
 
-
+@Deprecated
 public class BiExposerTest {
 
     @Test(expected = IOException.class)

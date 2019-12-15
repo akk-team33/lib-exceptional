@@ -2,14 +2,10 @@ package de.team33.libs.exceptional.v3;
 
 import java.util.function.Supplier;
 
-
 /**
- * A tool that can execute methods that may throw a {@link WrappedException} caused by a checked Exception of
- * certain types. If this is the case, the latter will be unwrapped and re-thrown.
- *
- * @see Exposer
- * @see BiExposer
+ * @deprecated Use {@link Insight} within an explicit {@code catch()} block instead.
  */
+@Deprecated
 public final class TriExposer<X extends Throwable, Y extends Throwable, Z extends Throwable> {
 
     private final Class<X> xClass;

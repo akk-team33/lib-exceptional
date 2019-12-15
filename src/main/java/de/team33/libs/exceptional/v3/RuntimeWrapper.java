@@ -12,9 +12,6 @@ import java.util.function.Supplier;
  */
 public class RuntimeWrapper<X extends RuntimeException> {
 
-//    public static final UncheckedWrapper<UncheckedEnvelope> DEFAULT =
-//            new UncheckedWrapper<>(UncheckedEnvelope::new);
-
     private final BiFunction<String, Throwable, X> wrapping;
 
     /**

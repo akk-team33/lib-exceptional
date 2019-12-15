@@ -1,5 +1,6 @@
 package de.team33.test.exceptional.v3;
 
+import de.team33.libs.exceptional.v3.RuntimeEnvelope;
 import de.team33.libs.exceptional.v3.RuntimeWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ public class RuntimeWrapperTest<X extends RuntimeException> {
     @Parameters(name = "{index}: {0} + {1}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                // {UncheckedEnvelope.class, RuntimeWrapper.DEFAULT},
+                {RuntimeEnvelope.class, new RuntimeWrapper<>(RuntimeEnvelope::new)},
                 {IllegalStateException.class, new RuntimeWrapper<>(IllegalStateException::new)},
                 {RuntimeException.class, new RuntimeWrapper<>(RuntimeException::new)}
         });
