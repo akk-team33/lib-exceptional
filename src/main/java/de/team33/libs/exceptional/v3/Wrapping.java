@@ -8,15 +8,15 @@ import java.util.function.Supplier;
 
 
 /**
- * A utility that can turn certain functional constructs that may throw checked exceptions into others that do
- * not.
- *
- * @see Wrapper
+ * A utility that can turn certain functional constructs that may throw several, or unspecific, checked exceptions
+ * into others that wraps such exceptions as {@link RuntimeEnvelope} or {@link CheckedEnvelope}.
  */
 public final class Wrapping {
 
     @SuppressWarnings("deprecation") // preliminary wraps into a WrappedException for compatibility reasons
-    private static final RuntimeWrapper<RuntimeEnvelope> DEFAULT = new RuntimeWrapper<>(WrappedException::new);
+    private static final RuntimeWrapper<RuntimeEnvelope> RUNTIME_WRAPPER = new RuntimeWrapper<>(WrappedException::new);
+    private static final CheckedWrapper<CheckedEnvelope> CHECKED_WRAPPER = new CheckedWrapper<>(CheckedEnvelope.class,
+                                                                                                CheckedEnvelope::new);
 
     private Wrapping() {
     }
@@ -26,7 +26,7 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static Runnable runnable(final XRunnable<?> xRunnable) {
-        return DEFAULT.runnable(xRunnable);
+        return RUNTIME_WRAPPER.runnable(xRunnable);
     }
 
     /**
@@ -34,7 +34,7 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static <T> Consumer<T> consumer(final XConsumer<T, ?> xConsumer) {
-        return DEFAULT.consumer(xConsumer);
+        return RUNTIME_WRAPPER.consumer(xConsumer);
     }
 
     /**
@@ -42,7 +42,7 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static <T, U> BiConsumer<T, U> biConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
-        return DEFAULT.biConsumer(xBiConsumer);
+        return RUNTIME_WRAPPER.biConsumer(xBiConsumer);
     }
 
     /**
@@ -50,7 +50,7 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static <R> Supplier<R> supplier(final XSupplier<R, ?> xSupplier) {
-        return DEFAULT.supplier(xSupplier);
+        return RUNTIME_WRAPPER.supplier(xSupplier);
     }
 
     /**
@@ -58,7 +58,7 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static <T, R> Function<T, R> function(final XFunction<T, R, ?> xFunction) {
-        return DEFAULT.function(xFunction);
+        return RUNTIME_WRAPPER.function(xFunction);
     }
 
     /**
@@ -66,6 +66,54 @@ public final class Wrapping {
      * checked exception as {@link RuntimeEnvelope}.
      */
     public static <T, U, R> BiFunction<T, U, R> biFunction(final XBiFunction<T, U, R, ?> xBiFunction) {
-        return DEFAULT.biFunction(xBiFunction);
+        return RUNTIME_WRAPPER.biFunction(xBiFunction);
+    }
+
+    /**
+     * Wraps an {@link XRunnable} that may throw an unspecific checked exception as {@link XRunnable} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static XRunnable<CheckedEnvelope> xRunnable(final XRunnable<?> xRunnable) {
+        return CHECKED_WRAPPER.xRunnable(xRunnable);
+    }
+
+    /**
+     * Wraps an {@link XConsumer} that may throw an unspecific checked exception as {@link XConsumer} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static <T> XConsumer<T, CheckedEnvelope> xConsumer(final XConsumer<T, ?> xConsumer) {
+        return CHECKED_WRAPPER.xConsumer(xConsumer);
+    }
+
+    /**
+     * Wraps an {@link XBiConsumer} that may throw an unspecific checked exception as {@link XBiConsumer} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static <T, U> XBiConsumer<T, U, CheckedEnvelope> xBiConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
+        return CHECKED_WRAPPER.xBiConsumer(xBiConsumer);
+    }
+
+    /**
+     * Wraps an {@link XSupplier} that may throw an unspecific checked exception as {@link XSupplier} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static <R> XSupplier<R, CheckedEnvelope> xSupplier(final XSupplier<R, ?> xSupplier) {
+        return CHECKED_WRAPPER.xSupplier(xSupplier);
+    }
+
+    /**
+     * Wraps an {@link XFunction} that may throw an unspecific checked exception as {@link XFunction} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static <T, R> XFunction<T, R, CheckedEnvelope> xFunction(final XFunction<T, R, ?> xFunction) {
+        return CHECKED_WRAPPER.xFunction(xFunction);
+    }
+
+    /**
+     * Wraps an {@link XBiFunction} that may throw an unspecific checked exception as {@link XBiFunction} that,
+     * when executed, wraps any occurring checked exception as {@link CheckedEnvelope}.
+     */
+    public static <T, U, R> XBiFunction<T, U, R, CheckedEnvelope> xBiFunction(final XBiFunction<T, U, R, ?> xBiFunction) {
+        return CHECKED_WRAPPER.xBiFunction(xBiFunction);
     }
 }
