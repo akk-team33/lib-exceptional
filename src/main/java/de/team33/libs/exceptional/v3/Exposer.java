@@ -3,7 +3,7 @@ package de.team33.libs.exceptional.v3;
 import java.util.function.Supplier;
 
 /**
- * @deprecated Use {@link Insight} within an explicit {@code catch()} block instead.
+ * @deprecated Use {@linkplain Disclosing} or {@link Insight} within an explicit {@code catch()} block instead.
  */
 @Deprecated
 public final class Exposer<X extends Throwable> {

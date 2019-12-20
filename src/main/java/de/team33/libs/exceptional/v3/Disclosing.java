@@ -48,32 +48,24 @@ public final class Disclosing<R extends RuntimeException, X extends Throwable> {
     }
 
     /**
-     * Immediately executes a runnable.
+     * Immediately executes a {@link Runnable}.
      *
-     * @throws X                if the runnable causes a {@link WrappedException}, which in turn is caused by
-     *                          an exception of type X
-     * @throws Error            if the runnable causes an {@link Error} or a {@link WrappedException},
-     *                          which in turn is caused by an {@link Error}
-     * @throws RuntimeException if the runnable causes a {@link RuntimeException} or a
-     *                          {@link WrappedException} which in turn is caused by another {@link RuntimeException}
-     * @throws WrappedException if the runnable causes a {@link WrappedException} that cannot be unwrapped in
-     *                          any of the above ways
+     * @throws X if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
+     *           which in turn is caused by an exception of type {@code <X>}.
+     * @throws R if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
+     *           which is NOT caused by an exception of type {@code <X>}.
      */
     public final void run(final Runnable runnable) throws X {
         get(wrap(runnable));
     }
 
     /**
-     * Immediately executes a supplier and returns its result.
+     * Immediately executes a {@link Supplier} and returns its result.
      *
-     * @throws X                if the supplier causes a {@link WrappedException}, which in turn is caused by
-     *                          an exception of type X
-     * @throws Error            if the supplier causes an {@link Error} or a {@link WrappedException},
-     *                          which in turn is caused by an {@link Error}
-     * @throws RuntimeException if the supplier causes a {@link RuntimeException} or a
-     *                          {@link WrappedException} which in turn is caused by another {@link RuntimeException}
-     * @throws WrappedException if the supplier causes a {@link WrappedException} that cannot be unwrapped in
-     *                          any of the above ways
+     * @throws X if the {@link Supplier} causes a {@link RuntimeException} of type {@code <R>},
+     *           which in turn is caused by an exception of type {@code <X>}.
+     * @throws R if the {@link Supplier} causes a {@link RuntimeException} of type {@code <R>},
+     *           which is NOT caused by an exception of type {@code <X>}.
      */
     public final <T> T get(final Supplier<T> supplier) throws X {
         try {
@@ -96,7 +88,8 @@ public final class Disclosing<R extends RuntimeException, X extends Throwable> {
 
     public interface Stage<R extends RuntimeException> {
         default <X extends Throwable> Disclosing<R, X> disclose(Class<X> xClass) {
-            return disclose(xClass, fallback -> {});
+            return disclose(xClass, fallback -> {
+            });
         }
 
         <X extends Throwable> Disclosing<R, X> disclose(Class<X> xClass, Consumer<? super R> onFallback);
