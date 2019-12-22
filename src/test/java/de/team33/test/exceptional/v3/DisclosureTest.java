@@ -1,6 +1,6 @@
 package de.team33.test.exceptional.v3;
 
-import de.team33.libs.exceptional.v3.Disclosing;
+import de.team33.libs.exceptional.v3.Disclosure;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -11,11 +11,11 @@ import java.util.logging.Logger;
 
 import static de.team33.libs.exceptional.v3.Disclosing_.on;
 
-public class DisclosingTest {
+public class DisclosureTest {
 
-    private static final Logger LOGGER = Logger.getLogger(DisclosingTest.class.getCanonicalName());
+    private static final Logger LOGGER = Logger.getLogger(DisclosureTest.class.getCanonicalName());
 
-    private final Disclosing<Envelope, IOException> disclosing = on(Envelope.class)
+    private final Disclosure<Envelope, IOException> disclosing = on(Envelope.class)
             .disclose(IOException.class, fallback -> LOGGER.log(Level.WARNING, "Undisclosed", fallback));
 
     private static <T extends Throwable> void fire(final Supplier<T> supplier) throws T {

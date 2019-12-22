@@ -3,7 +3,7 @@ package de.team33.libs.exceptional.v3;
 import java.util.function.Supplier;
 
 /**
- * @deprecated Use {@linkplain BiDisclosing} or {@link Insight} within an explicit {@code catch()} block instead.
+ * @deprecated Use {@linkplain BiDisclosure} or {@link Insight} within an explicit {@code catch()} block instead.
  */
 @Deprecated
 public final class BiExposer<X extends Throwable, Y extends Throwable> {

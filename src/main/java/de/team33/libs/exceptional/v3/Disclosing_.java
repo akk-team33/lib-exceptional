@@ -19,32 +19,32 @@ public class Disclosing_<R extends RuntimeException> {
     }
 
     public final <X extends Throwable>
-    Disclosing<R, X> disclose(final Class<X> xClass) {
+    Disclosure<R, X> disclose(final Class<X> xClass) {
         return disclose(xClass, IGNORE_FALLBACK);
     }
 
     public final <X extends Throwable>
-    Disclosing<R, X> disclose(final Class<X> xClass, final Consumer<? super R> onFallback) {
-        return new Disclosing<>(rClass, xClass, onFallback);
+    Disclosure<R, X> disclose(final Class<X> xClass, final Consumer<? super R> onFallback) {
+        return new Disclosure<>(rClass, xClass, onFallback);
     }
 
     public final <X extends Throwable, Y extends Throwable>
-    BiDisclosing<R, X, Y> disclose(final Class<X> xClass, final Class<Y> yClass) {
+    BiDisclosure<R, X, Y> disclose(final Class<X> xClass, final Class<Y> yClass) {
         return disclose(xClass, yClass, IGNORE_FALLBACK);
     }
 
     public final <X extends Throwable, Y extends Throwable>
-    BiDisclosing<R, X, Y> disclose(final Class<X> xClass, final Class<Y> yClass, final Consumer<? super R> onFallback) {
-        return new BiDisclosing<>(rClass, xClass, yClass, onFallback);
+    BiDisclosure<R, X, Y> disclose(final Class<X> xClass, final Class<Y> yClass, final Consumer<? super R> onFallback) {
+        return new BiDisclosure<>(rClass, xClass, yClass, onFallback);
     }
 
     public final <X extends Throwable, Y extends Throwable, Z extends Throwable>
-    TriDisclosing<R, X, Y, Z> disclose(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass) {
+    TriDisclosure<R, X, Y, Z> disclose(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass) {
         return disclose(xClass, yClass, zClass, IGNORE_FALLBACK);
     }
 
     public final <X extends Throwable, Y extends Throwable, Z extends Throwable>
-    TriDisclosing<R, X, Y, Z> disclose(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass, final Consumer<? super R> onFallback) {
-        return new TriDisclosing<>(rClass, xClass, yClass, zClass, onFallback);
+    TriDisclosure<R, X, Y, Z> disclose(final Class<X> xClass, final Class<Y> yClass, final Class<Z> zClass, final Consumer<? super R> onFallback) {
+        return new TriDisclosure<>(rClass, xClass, yClass, zClass, onFallback);
     }
 }
