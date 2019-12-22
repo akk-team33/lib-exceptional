@@ -2,20 +2,20 @@ package de.team33.libs.exceptional.v3;
 
 import java.util.function.Consumer;
 
-public class Disclosing_<R extends RuntimeException> {
+public class Disclosing<R extends RuntimeException> {
 
     private static final Consumer<Object> IGNORE_FALLBACK = fallback -> {
     };
 
     private final Class<R> rClass;
 
-    private Disclosing_(final Class<R> rClass) {
+    private Disclosing(final Class<R> rClass) {
         this.rClass = rClass;
     }
 
     public static <R extends RuntimeException>
-    Disclosing_<R> on(final Class<R> rClass) {
-        return new Disclosing_<>(rClass);
+    Disclosing<R> on(final Class<R> rClass) {
+        return new Disclosing<>(rClass);
     }
 
     public final <X extends Throwable>
