@@ -2,6 +2,11 @@ package de.team33.libs.exceptional.v3;
 
 import java.util.function.Consumer;
 
+/**
+ * A tool to create Disclosures
+ *
+ * @see #on(Class)
+ */
 public class Disclosing<R extends RuntimeException> {
 
     private static final Consumer<Object> IGNORE_FALLBACK = fallback -> {

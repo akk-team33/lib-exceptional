@@ -3,7 +3,7 @@ package de.team33.libs.exceptional.v3;
 import java.util.function.Supplier;
 
 /**
- * @deprecated Use {@link Insight} within an explicit {@code catch()} block instead.
+ * @deprecated Use {@linkplain TriDisclosure} or {@link Insight} within an explicit {@code catch()} block instead.
  */
 @Deprecated
 public final class TriExposer<X extends Throwable, Y extends Throwable, Z extends Throwable> {

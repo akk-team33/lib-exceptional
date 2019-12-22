@@ -11,6 +11,8 @@ import java.util.function.Supplier;
  * @param <X> The first specific type of exceptions to be disclosed.
  * @param <Y> The second specific type of exceptions to be disclosed.
  * @param <Z> The third specific type of exceptions to be disclosed.
+ * @see Disclosing#disclose(Class, Class, Class)
+ * @see Disclosing#disclose(Class, Class, Class, Consumer)
  */
 public final class TriDisclosure<
         R extends RuntimeException,

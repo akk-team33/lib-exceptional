@@ -10,6 +10,8 @@ import java.util.function.Supplier;
  * @param <R> The specific type of enclosing {@link RuntimeException}s to be looked at.
  * @param <X> The first specific type of exceptions to be disclosed.
  * @param <Y> The other specific type of exceptions to be disclosed.
+ * @see Disclosing#disclose(Class, Class)
+ * @see Disclosing#disclose(Class, Class, Consumer)
  */
 public final class BiDisclosure<R extends RuntimeException, X extends Throwable, Y extends Throwable> {
 

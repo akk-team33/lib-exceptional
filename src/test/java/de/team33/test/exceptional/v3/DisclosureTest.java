@@ -52,7 +52,7 @@ public class DisclosureTest {
         disclosing.run(() -> fire(IllegalStateException::new));
     }
 
-    private static class Envelope extends RuntimeException {
+    private static final class Envelope extends RuntimeException {
         private Envelope() {
         }
 
