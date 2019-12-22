@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static de.team33.libs.exceptional.v3.Disclosing.on;
+import static de.team33.libs.exceptional.v3.Disclosing_.on;
 
 public class DisclosingTest {
 

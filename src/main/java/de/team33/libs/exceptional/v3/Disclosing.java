@@ -16,28 +16,10 @@ public final class Disclosing<R extends RuntimeException, X extends Throwable> {
     private final Class<X> xClass;
     private final Consumer<? super R> onFallback;
 
-    /**
-     * Initializes a new instance.
-     *
-     * @param rClass     The specific type of enclosing {@link RuntimeException}s to be looked at.
-     * @param xClass     The specific type of exceptions to be disclosed.
-     * @param onFallback A method that is applied to an (alleged) enclosing exception if it actually is not caused by
-     *                   an exception of the expected type.
-     */
-    public Disclosing(final Class<R> rClass, final Class<X> xClass, final Consumer<? super R> onFallback) {
+    Disclosing(final Class<R> rClass, final Class<X> xClass, final Consumer<? super R> onFallback) {
         this.rClass = rClass;
         this.xClass = xClass;
         this.onFallback = onFallback;
-    }
-
-    public static <R extends RuntimeException> Stage<R> on(final Class<R> rClass) {
-        return new Stage<R>() {
-            @Override
-            public <X extends Throwable> Disclosing<R, X> disclose(final Class<X> xClass,
-                                                                   final Consumer<? super R> onFallback) {
-                return new Disclosing<>(rClass, xClass, onFallback);
-            }
-        };
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {
@@ -84,14 +66,5 @@ public final class Disclosing<R extends RuntimeException, X extends Throwable> {
     private R fallback(final R fallback) {
         onFallback.accept(fallback);
         return fallback;
-    }
-
-    public interface Stage<R extends RuntimeException> {
-        default <X extends Throwable> Disclosing<R, X> disclose(Class<X> xClass) {
-            return disclose(xClass, fallback -> {
-            });
-        }
-
-        <X extends Throwable> Disclosing<R, X> disclose(Class<X> xClass, Consumer<? super R> onFallback);
     }
 }

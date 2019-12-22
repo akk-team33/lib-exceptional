@@ -1,6 +1,7 @@
 package de.team33.test.exceptional.v3;
 
 import de.team33.libs.exceptional.v3.BiDisclosing;
+import de.team33.libs.exceptional.v3.Disclosing_;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -14,7 +15,7 @@ public class BiDisclosingTest {
 
     private static final Logger LOGGER = Logger.getLogger(BiDisclosingTest.class.getCanonicalName());
 
-    private final BiDisclosing<Envelope, IOException, SQLException> disclosing = BiDisclosing
+    private final BiDisclosing<Envelope, IOException, SQLException> disclosing = Disclosing_
             .on(Envelope.class)
             .disclose(
                     IOException.class, SQLException.class,

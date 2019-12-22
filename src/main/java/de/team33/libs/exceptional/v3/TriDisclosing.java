@@ -4,25 +4,35 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * <p>A tool to disclose two specific types of (typically checked) exceptions wrapped by
+ * <p>A tool to disclose three specific types of (typically checked) exceptions wrapped by
  * ({@linkplain Throwable#getCause() cause} of) a specific type of {@link RuntimeException}s.</p>
  *
  * @param <R> The specific type of enclosing {@link RuntimeException}s to be looked at.
  * @param <X> The first specific type of exceptions to be disclosed.
- * @param <Y> The other specific type of exceptions to be disclosed.
+ * @param <Y> The second specific type of exceptions to be disclosed.
+ * @param <Z> The third specific type of exceptions to be disclosed.
  */
-public final class BiDisclosing<R extends RuntimeException, X extends Throwable, Y extends Throwable> {
+public final class TriDisclosing<
+        R extends RuntimeException,
+        X extends Throwable,
+        Y extends Throwable,
+        Z extends Throwable> {
 
     private final Class<R> rClass;
     private final Class<X> xClass;
     private final Class<Y> yClass;
+    private final Class<Z> zClass;
     private final Consumer<? super R> onFallback;
 
-    BiDisclosing(final Class<R> rClass,
-                 final Class<X> xClass, final Class<Y> yClass, final Consumer<? super R> onFallback) {
+    TriDisclosing(final Class<R> rClass,
+                  final Class<X> xClass,
+                  final Class<Y> yClass,
+                  final Class<Z> zClass,
+                  final Consumer<? super R> onFallback) {
         this.rClass = rClass;
         this.xClass = xClass;
         this.yClass = yClass;
+        this.zClass = zClass;
         this.onFallback = onFallback;
     }
 
@@ -43,7 +53,7 @@ public final class BiDisclosing<R extends RuntimeException, X extends Throwable,
      * @throws R if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
      *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
      */
-    public final void run(final Runnable runnable) throws X, Y {
+    public final void run(final Runnable runnable) throws X, Y, Z {
         get(wrap(runnable));
     }
 
@@ -57,7 +67,7 @@ public final class BiDisclosing<R extends RuntimeException, X extends Throwable,
      * @throws R if the {@link Supplier} causes a {@link RuntimeException} of type {@code <R>},
      *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
      */
-    public final <T> T get(final Supplier<T> supplier) throws X, Y {
+    public final <T> T get(final Supplier<T> supplier) throws X, Y, Z {
         try {
             return supplier.get();
         } catch (final RuntimeException caught) {
@@ -65,10 +75,11 @@ public final class BiDisclosing<R extends RuntimeException, X extends Throwable,
         }
     }
 
-    private R insight(final R caught) throws X, Y {
+    private R insight(final R caught) throws X, Y, Z {
         return fallback(Insight.into(caught)
                                .reThrowCauseIf(xClass)
                                .reThrowCauseIf(yClass)
+                               .reThrowCauseIf(zClass)
                                .fallback());
     }
 
