@@ -16,24 +16,11 @@ import java.util.function.Supplier;
  */
 public final class BiDisclosure<R extends RuntimeException, X extends Throwable, Y extends Throwable> {
 
-    private final Class<R> rClass;
-    private final Class<X> xClass;
-    private final Class<Y> yClass;
-    private final Consumer<? super R> onFallback;
+    private final TriDisclosure<R, X, Y, Y> core;
 
     BiDisclosure(final Class<R> rClass,
                  final Class<X> xClass, final Class<Y> yClass, final Consumer<? super R> onFallback) {
-        this.rClass = rClass;
-        this.xClass = xClass;
-        this.yClass = yClass;
-        this.onFallback = onFallback;
-    }
-
-    private static Supplier<Void> wrap(final Runnable runnable) {
-        return () -> {
-            runnable.run();
-            return null;
-        };
+        this.core = new TriDisclosure<>(rClass, xClass, yClass, yClass, onFallback);
     }
 
     /**
@@ -47,7 +34,7 @@ public final class BiDisclosure<R extends RuntimeException, X extends Throwable,
      *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
      */
     public final void run(final Runnable runnable) throws X, Y {
-        get(wrap(runnable));
+        core.run(runnable);
     }
 
     /**
@@ -61,22 +48,6 @@ public final class BiDisclosure<R extends RuntimeException, X extends Throwable,
      *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
      */
     public final <T> T get(final Supplier<T> supplier) throws X, Y {
-        try {
-            return supplier.get();
-        } catch (final RuntimeException caught) {
-            throw rClass.isInstance(caught) ? insight(rClass.cast(caught)) : caught;
-        }
-    }
-
-    private R insight(final R caught) throws X, Y {
-        return fallback(Insight.into(caught)
-                               .reThrowCauseIf(xClass)
-                               .reThrowCauseIf(yClass)
-                               .fallback());
-    }
-
-    private R fallback(final R fallback) {
-        onFallback.accept(fallback);
-        return fallback;
+        return core.get(supplier);
     }
 }
