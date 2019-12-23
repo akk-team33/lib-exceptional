@@ -11,6 +11,7 @@ import java.util.function.Supplier;
  * @param <X> The first specific type of exceptions to be disclosed.
  * @param <Y> The second specific type of exceptions to be disclosed.
  * @param <Z> The third specific type of exceptions to be disclosed.
+ * @see Disclosing#on(Class)
  * @see Disclosing#disclose(Class, Class, Class)
  * @see Disclosing#disclose(Class, Class, Class, Consumer)
  */
@@ -52,8 +53,10 @@ public final class TriDisclosure<
      *           which in turn is caused by an exception of type {@code <X>}.
      * @throws Y if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
      *           which in turn is caused by an exception of type {@code <Y>}.
+     * @throws Z if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
+     *           which in turn is caused by an exception of type {@code <Z>}.
      * @throws R if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
-     *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
+     *           which is NOT caused by an exception of type {@code <X>}, {@code <Y>} or {@code <Z>}.
      */
     public final void run(final Runnable runnable) throws X, Y, Z {
         get(wrap(runnable));
@@ -66,8 +69,10 @@ public final class TriDisclosure<
      *           which in turn is caused by an exception of type {@code <X>}.
      * @throws Y if the {@link Supplier} causes a {@link RuntimeException} of type {@code <R>},
      *           which in turn is caused by an exception of type {@code <Y>}.
-     * @throws R if the {@link Supplier} causes a {@link RuntimeException} of type {@code <R>},
-     *           which is NOT caused by an exception of type {@code <X>} or {@code <Y>}.
+     * @throws Z if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
+     *           which in turn is caused by an exception of type {@code <Z>}.
+     * @throws R if the {@link Runnable} causes a {@link RuntimeException} of type {@code <R>},
+     *           which is NOT caused by an exception of type {@code <X>}, {@code <Y>} or {@code <Z>}.
      */
     public final <T> T get(final Supplier<T> supplier) throws X, Y, Z {
         try {

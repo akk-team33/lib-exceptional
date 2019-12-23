@@ -9,6 +9,7 @@ import java.util.function.Supplier;
  *
  * @param <R> The specific type of enclosing {@link RuntimeException}s to be looked at.
  * @param <X> The specific type of exceptions to be disclosed.
+ * @see Disclosing#on(Class)
  * @see Disclosing#disclose(Class)
  * @see Disclosing#disclose(Class, Consumer)
  */
