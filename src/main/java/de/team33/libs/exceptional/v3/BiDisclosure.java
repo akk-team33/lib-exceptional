@@ -16,11 +16,11 @@ import java.util.function.Supplier;
  */
 public final class BiDisclosure<R extends RuntimeException, X extends Throwable, Y extends Throwable> {
 
-    private final TriDisclosure<R, X, Y, Y> core;
+    private final CoreDisclosure<R, X, Y, Y> core;
 
     BiDisclosure(final Class<R> rClass,
                  final Class<X> xClass, final Class<Y> yClass, final Consumer<? super R> onFallback) {
-        this.core = new TriDisclosure<>(rClass, xClass, yClass, yClass, onFallback);
+        this.core = new CoreDisclosure<>(rClass, xClass, yClass, yClass, onFallback);
     }
 
     /**

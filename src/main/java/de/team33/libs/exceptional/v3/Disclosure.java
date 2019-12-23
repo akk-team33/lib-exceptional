@@ -15,10 +15,10 @@ import java.util.function.Supplier;
  */
 public final class Disclosure<R extends RuntimeException, X extends Throwable> {
 
-    private final TriDisclosure<R, X, X, X> core;
+    private final CoreDisclosure<R, X, X, X> core;
 
     Disclosure(final Class<R> rClass, final Class<X> xClass, final Consumer<? super R> onFallback) {
-        this.core = new TriDisclosure<>(rClass, xClass, xClass, xClass, onFallback);
+        this.core = new CoreDisclosure<>(rClass, xClass, xClass, xClass, onFallback);
     }
 
     /**
