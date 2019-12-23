@@ -26,17 +26,20 @@ public final class TriDisclosure<
     private final Class<Y> yClass;
     private final Class<Z> zClass;
     private final Consumer<? super R> onFallback;
+    private final Inspection<R, X, Y, Z> inspection;
 
-    TriDisclosure(final Class<R> rClass,
-                  final Class<X> xClass,
-                  final Class<Y> yClass,
-                  final Class<Z> zClass,
+    TriDisclosure(final Class<R> r, final Class<X> x, final Class<Y> y, final Class<Z> z,
                   final Consumer<? super R> onFallback) {
-        this.rClass = rClass;
-        this.xClass = xClass;
-        this.yClass = yClass;
-        this.zClass = zClass;
+        this.rClass = r;
+        this.xClass = x;
+        this.yClass = y;
+        this.zClass = z;
         this.onFallback = onFallback;
+        this.inspection = inspectionMethod(x, y, z);
+    }
+
+    private Inspection<R, X, Y, Z> inspectionMethod(final Class<X> x, final Class<Y> y, final Class<Z> z) {
+        return (y == z) ? ((x == y) ? this::xInsight : this::xyInsight) : this::xyzInsight;
     }
 
     private static Supplier<Void> wrap(final Runnable runnable) {
@@ -78,20 +81,38 @@ public final class TriDisclosure<
         try {
             return supplier.get();
         } catch (final RuntimeException caught) {
-            throw rClass.isInstance(caught) ? insight(rClass.cast(caught)) : caught;
+            throw rClass.isInstance(caught) ? handle(inspection.insight(rClass.cast(caught))) : caught;
         }
     }
 
-    private R insight(final R caught) throws X, Y, Z {
-        return fallback(Insight.into(caught)
-                               .reThrowCauseIf(xClass)
-                               .reThrowCauseIf(yClass)
-                               .reThrowCauseIf(zClass)
-                               .fallback());
+    private R xInsight(final R caught) throws X {
+        return Insight.into(caught)
+                      .reThrowCauseIf(xClass)
+                      .fallback();
     }
 
-    private R fallback(final R fallback) {
+    private R xyInsight(final R caught) throws X, Y {
+        return Insight.into(caught)
+                      .reThrowCauseIf(xClass)
+                      .reThrowCauseIf(yClass)
+                      .fallback();
+    }
+
+    private R xyzInsight(final R caught) throws X, Y, Z {
+        return Insight.into(caught)
+                      .reThrowCauseIf(xClass)
+                      .reThrowCauseIf(yClass)
+                      .reThrowCauseIf(zClass)
+                      .fallback();
+    }
+
+    private R handle(final R fallback) {
         onFallback.accept(fallback);
         return fallback;
+    }
+
+    private interface Inspection<
+            R extends RuntimeException, X extends Throwable, Y extends Throwable, Z extends Throwable> {
+        R insight(R r) throws X, Y, Z;
     }
 }

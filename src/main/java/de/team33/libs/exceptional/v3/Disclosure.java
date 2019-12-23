@@ -15,21 +15,10 @@ import java.util.function.Supplier;
  */
 public final class Disclosure<R extends RuntimeException, X extends Throwable> {
 
-    private final Class<R> rClass;
-    private final Class<X> xClass;
-    private final Consumer<? super R> onFallback;
+    private final TriDisclosure<R, X, X, X> core;
 
     Disclosure(final Class<R> rClass, final Class<X> xClass, final Consumer<? super R> onFallback) {
-        this.rClass = rClass;
-        this.xClass = xClass;
-        this.onFallback = onFallback;
-    }
-
-    private static Supplier<Void> wrap(final Runnable runnable) {
-        return () -> {
-            runnable.run();
-            return null;
-        };
+        this.core = new TriDisclosure<>(rClass, xClass, xClass, xClass, onFallback);
     }
 
     /**
@@ -41,7 +30,7 @@ public final class Disclosure<R extends RuntimeException, X extends Throwable> {
      *           which is NOT caused by an exception of type {@code <X>}.
      */
     public final void run(final Runnable runnable) throws X {
-        get(wrap(runnable));
+        core.run(runnable);
     }
 
     /**
@@ -53,21 +42,6 @@ public final class Disclosure<R extends RuntimeException, X extends Throwable> {
      *           which is NOT caused by an exception of type {@code <X>}.
      */
     public final <T> T get(final Supplier<T> supplier) throws X {
-        try {
-            return supplier.get();
-        } catch (final RuntimeException caught) {
-            throw rClass.isInstance(caught) ? insight(rClass.cast(caught)) : caught;
-        }
-    }
-
-    private R insight(final R caught) throws X {
-        return fallback(Insight.into(caught)
-                               .reThrowCauseIf(xClass)
-                               .fallback());
-    }
-
-    private R fallback(final R fallback) {
-        onFallback.accept(fallback);
-        return fallback;
+        return core.get(supplier);
     }
 }
