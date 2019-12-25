@@ -87,6 +87,28 @@ public class RuntimeWrapperTest<X extends RuntimeException> {
     }
 
     @Test
+    public final void predicate() {
+        try {
+            final boolean result = wrapper.predicate(t -> null == tryString(false)).test(null);
+            fail("expected to fail but was " + result);
+        } catch (final RuntimeException e) {
+            assertEquals(runtimeExceptionType, e.getClass());
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
+    public final void biPredicate() {
+        try {
+            final boolean result = wrapper.biPredicate((t, u) -> null == tryString(false)).test(null, null);
+            fail("expected to fail but was " + result);
+        } catch (final RuntimeException e) {
+            assertEquals(runtimeExceptionType, e.getClass());
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
     public final void function() {
         try {
             final String result = wrapper.function(t -> tryString(false)).apply(null);

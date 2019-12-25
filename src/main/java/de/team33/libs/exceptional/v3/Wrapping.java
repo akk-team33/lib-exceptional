@@ -2,8 +2,10 @@ package de.team33.libs.exceptional.v3;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -54,6 +56,22 @@ public final class Wrapping {
     }
 
     /**
+     * Wraps an {@link XPredicate} as {@link Predicate} that, when executed, wraps any occurring
+     * checked exception as {@link RuntimeEnvelope}.
+     */
+    public static <T> Predicate<T> predicate(final XPredicate<T, ?> xPredicate) {
+        return RUNTIME_WRAPPER.predicate(xPredicate);
+    }
+
+    /**
+     * Wraps an {@link XBiPredicate} as {@link BiPredicate} that, when executed, wraps any occurring
+     * checked exception as {@link RuntimeEnvelope}.
+     */
+    public static <T, U> BiPredicate<T, U> biPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
+        return RUNTIME_WRAPPER.biPredicate(xBiPredicate);
+    }
+
+    /**
      * Wraps an {@link XFunction} as {@link Function} that, when executed, wraps any occurring
      * checked exception as {@link RuntimeEnvelope}.
      */
@@ -99,6 +117,22 @@ public final class Wrapping {
      */
     public static <R> XSupplier<R, CheckedEnvelope> xSupplier(final XSupplier<R, ?> xSupplier) {
         return CHECKED_WRAPPER.xSupplier(xSupplier);
+    }
+
+    /**
+     * Wraps an {@link XPredicate} as {@link Predicate} that, when executed, wraps any occurring
+     * checked exception as {@link RuntimeEnvelope}.
+     */
+    public static <T> XPredicate<T, CheckedEnvelope> xPredicate(final XPredicate<T, ?> xPredicate) {
+        return CHECKED_WRAPPER.xPredicate(xPredicate);
+    }
+
+    /**
+     * Wraps an {@link XBiPredicate} as {@link BiPredicate} that, when executed, wraps any occurring
+     * checked exception as {@link RuntimeEnvelope}.
+     */
+    public static <T, U> XBiPredicate<T, U, CheckedEnvelope> xBiPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
+        return CHECKED_WRAPPER.xBiPredicate(xBiPredicate);
     }
 
     /**

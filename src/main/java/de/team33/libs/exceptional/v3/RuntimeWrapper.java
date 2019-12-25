@@ -2,8 +2,10 @@ package de.team33.libs.exceptional.v3;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -44,6 +46,14 @@ public class RuntimeWrapper<X extends RuntimeException> {
 
     private static <R> XBiFunction<Void, Void, R, ?> toXBiFunction(final XSupplier<R, ?> xSupplier) {
         return (t, u) -> xSupplier.get();
+    }
+
+    private static <T> XBiFunction<T, Void, Boolean, ?> toXBiFunction(final XPredicate<T, ?> xPredicate) {
+        return (t, u) -> xPredicate.test(t);
+    }
+
+    private static <T, U> XBiFunction<T, U, Boolean, ?> toXBiFunction(final XBiPredicate<T, U, ?> xBiPredicate) {
+        return xBiPredicate::test;
     }
 
     private static <T, R> XBiFunction<T, Void, R, ?> toXBiFunction(final XFunction<T, R, ?> xFunction) {
@@ -93,6 +103,22 @@ public class RuntimeWrapper<X extends RuntimeException> {
     }
 
     /**
+     * Wraps an {@link XPredicate} that may throw an unspecific checked exception as {@link Predicate} that,
+     * when executed, wraps any occurring checked exception as specific unchecked exception.
+     */
+    public final <T> Predicate<T> predicate(final XPredicate<T, ?> xPredicate) {
+        return t -> call(toXBiFunction(xPredicate), t, null);
+    }
+
+    /**
+     * Wraps an {@link XBiPredicate} that may throw an unspecific checked exception as {@link BiPredicate} that,
+     * when executed, wraps any occurring checked exception as a specific unchecked exception.
+     */
+    public <T, U> BiPredicate<T, U> biPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
+        return (t, u) -> call(toXBiFunction(xBiPredicate), t, u);
+    }
+
+    /**
      * Wraps an {@link XFunction} that may throw an unspecific checked exception as {@link Function} that,
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
@@ -101,7 +127,7 @@ public class RuntimeWrapper<X extends RuntimeException> {
     }
 
     /**
-     * Wraps an {@link XBiFunction} that may throw an unspecific checked exception as {@link XBiFunction} that,
+     * Wraps an {@link XBiFunction} that may throw an unspecific checked exception as {@link BiFunction} that,
      * when executed, wraps any occurring checked exception as a specific unchecked exception.
      */
     public final <T, U, R> BiFunction<T, U, R> biFunction(final XBiFunction<T, U, R, ?> xBiFunction) {

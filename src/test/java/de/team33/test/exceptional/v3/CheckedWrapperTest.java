@@ -89,6 +89,28 @@ public class CheckedWrapperTest<X extends Exception> {
     }
 
     @Test
+    public final void xPredicate() {
+        try {
+            final boolean result = wrapper.xPredicate(t -> null == tryString(false)).test(null);
+            fail("expected to fail but was " + result);
+        } catch (final Exception e) {
+            assertEquals(exceptionType, e.getClass());
+            assertEquals(SAXException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
+    public final void xBiPredicate() {
+        try {
+            final boolean result = wrapper.xBiPredicate((t, u) -> null == tryString(false)).test(null, null);
+            fail("expected to fail but was " + result);
+        } catch (final Exception e) {
+            assertEquals(exceptionType, e.getClass());
+            assertEquals(SAXException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
     public final void xFunction() {
         try {
             final String result = wrapper.xFunction(t -> tryString(false)).apply(null);

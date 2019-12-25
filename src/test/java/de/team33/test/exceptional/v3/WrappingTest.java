@@ -70,6 +70,30 @@ public class WrappingTest {
     }
 
     @Test
+    public final void predicate() {
+        // Formally expects a RuntimeEnvelope but for compatibly reasons preliminary expects a WrappedException
+        // noinspection deprecation
+        try {
+            final boolean result = Wrapping.predicate(t -> null == tryString(false)).test(null);
+            fail("expected to fail but was " + result);
+        } catch (final WrappedException e) {
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
+    public final void biPredicate() {
+        // Formally expects a RuntimeEnvelope but for compatibly reasons preliminary expects a WrappedException
+        // noinspection deprecation
+        try {
+            final boolean result = Wrapping.biPredicate((t, u) -> null == tryString(false)).test(null, null);
+            fail("expected to fail but was " + result);
+        } catch (final WrappedException e) {
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
     public final void function() {
         // Formally expects a RuntimeEnvelope but for compatibly reasons preliminary expects a WrappedException
         // noinspection deprecation
@@ -127,6 +151,30 @@ public class WrappingTest {
     public final void xSupplier() {
         try {
             final String result = Wrapping.xSupplier(() -> tryString(false)).get();
+            fail("expected to fail but was " + result);
+        } catch (final CheckedEnvelope e) {
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
+    public final void xPredicate() {
+        // Formally expects a RuntimeEnvelope but for compatibly reasons preliminary expects a WrappedException
+        // noinspection deprecation
+        try {
+            final boolean result = Wrapping.xPredicate(t -> null == tryString(false)).test(null);
+            fail("expected to fail but was " + result);
+        } catch (final CheckedEnvelope e) {
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
+    }
+
+    @Test
+    public final void xBiPredicate() {
+        // Formally expects a RuntimeEnvelope but for compatibly reasons preliminary expects a WrappedException
+        // noinspection deprecation
+        try {
+            final boolean result = Wrapping.xBiPredicate((t, u) -> null == tryString(false)).test(null, null);
             fail("expected to fail but was " + result);
         } catch (final CheckedEnvelope e) {
             assertEquals(IOException.class, e.getCause().getClass());
