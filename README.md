@@ -9,5 +9,5 @@
     <dependency>
       <groupId>de.team33.libs</groupId>
       <artifactId>lib-exceptional</artifactId>
-      <version>8.3.1</version>
+      <version>8.3.2</version>
     </dependency>
