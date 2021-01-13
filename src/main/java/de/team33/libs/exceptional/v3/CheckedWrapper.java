@@ -1,5 +1,14 @@
 package de.team33.libs.exceptional.v3;
 
+import de.team33.libs.exceptional.v4.functional.XBiConsumer;
+import de.team33.libs.exceptional.v4.functional.XBiFunction;
+import de.team33.libs.exceptional.v4.functional.XBiPredicate;
+import de.team33.libs.exceptional.v4.functional.XConsumer;
+import de.team33.libs.exceptional.v4.functional.XFunction;
+import de.team33.libs.exceptional.v4.functional.XPredicate;
+import de.team33.libs.exceptional.v4.functional.XRunnable;
+import de.team33.libs.exceptional.v4.functional.XSupplier;
+
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
