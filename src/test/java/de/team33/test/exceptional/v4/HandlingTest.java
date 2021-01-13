@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
 @SuppressWarnings({"MultipleTopLevelClassesInFile", "NestedTryStatement"})
 public class HandlingTest {
 
-    private static <X extends Exception> void getAndThrow(final Supplier<X> supplier) throws X {
+    private static <X extends Exception> void doThrow(final Supplier<X> supplier) throws X {
         throw supplier.get();
     }
 
@@ -35,8 +35,8 @@ public class HandlingTest {
         for (final Supplier<RuntimeException> newException : newExceptionList) {
             try {
                 try {
-                    getAndThrow(newException);
-                    fail("should not happen");
+                    doThrow(newException);
+                    fail("unexpected: no exception thrown");
                 } catch (final RuntimeException caught) {
                     Handling.of(caught)
                             .throwMapped(subject -> Optional.of(subject)
@@ -51,6 +51,7 @@ public class HandlingTest {
                                                             .filter(equalsMessage("SubExceptionC"))
                                                             .map(SubExceptionC::new)
                                                             .orElse(null));
+                    // No handling took place. This is expected only if ...
                     assertSame(newIOException, newException);
                 }
             } catch (final SubExceptionA caught) {
@@ -74,8 +75,8 @@ public class HandlingTest {
         for (final Supplier<Exception> newException : newExceptionList) {
             try {
                 try {
-                    getAndThrow(newException);
-                    fail("should not happen");
+                    doThrow(newException);
+                    fail("unexpected: no exception thrown");
                 } catch (final Exception caught) {
                     Handling.of(caught)
                             .reThrowIf(SubExceptionA.class)
@@ -104,8 +105,8 @@ public class HandlingTest {
         for (final Supplier<RuntimeException> newException : newExceptionList) {
             try {
                 try {
-                    getAndThrow(newException);
-                    fail("should not happen");
+                    doThrow(newException);
+                    fail("unexpected: no exception thrown");
                 } catch (final RuntimeException caught) {
                     Handling.of(caught)
                             .throwMappedCause(cause -> Optional.of(cause)
@@ -143,8 +144,8 @@ public class HandlingTest {
         for (final Supplier<RuntimeException> newException : newExceptionList) {
             try {
                 try {
-                    getAndThrow(newException);
-                    fail("should not happen");
+                    doThrow(newException);
+                    fail("unexpected: no exception thrown");
                 } catch (final RuntimeException caught) {
                     Handling.of(caught)
                             .reThrowCauseIf(SubExceptionA.class)
