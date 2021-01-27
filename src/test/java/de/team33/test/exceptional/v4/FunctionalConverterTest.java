@@ -1,6 +1,6 @@
 package de.team33.test.exceptional.v4;
 
-import de.team33.libs.exceptional.v4.ExceptionWrapper;
+import de.team33.libs.exceptional.v4.FunctionalConverter;
 import de.team33.libs.exceptional.v4.WrappedException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +9,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -17,12 +16,12 @@ import static org.junit.Assert.fail;
 
 
 @RunWith(Parameterized.class)
-public class ExceptionWrapperTest {
+public class FunctionalConverterTest {
 
     private final Class<?> runtimeExceptionType;
-    private final ExceptionWrapper wrapper;
+    private final FunctionalConverter wrapper;
 
-    public ExceptionWrapperTest(final Class<?> runtimeExceptionType, final ExceptionWrapper wrapper) {
+    public FunctionalConverterTest(final Class<?> runtimeExceptionType, final FunctionalConverter wrapper) {
         this.runtimeExceptionType = runtimeExceptionType;
         this.wrapper = wrapper;
     }
@@ -30,9 +29,9 @@ public class ExceptionWrapperTest {
     @Parameters(name = "{index}: {0} + {1}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {WrappedException.class, ExceptionWrapper.using(WrappedException::new)},
-                {IllegalStateException.class, ExceptionWrapper.using(IllegalStateException::new)},
-                {RuntimeException.class, ExceptionWrapper.using(RuntimeException::new)}
+                {WrappedException.class, FunctionalConverter.using(WrappedException::new)},
+                {IllegalStateException.class, FunctionalConverter.using(IllegalStateException::new)},
+                {RuntimeException.class, FunctionalConverter.using(RuntimeException::new)}
         });
     }
 

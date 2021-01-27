@@ -19,15 +19,14 @@ import de.team33.libs.exceptional.v4.functional.XSupplier;
 
 
 /**
- * A tool that can be used to turn certain functional constructs that may throw different or unspecific
- * checked exceptions into others that catch such exceptions, wrap them in a specific unchecked exception,
- * and throw them again.
+ * A tool that can convert certain functional constructs that may throw checked exceptions (e.g. {@link XFunction})
+ * into more common constructs (e.g. {@link Function}) that will wrap such exceptions in unchecked exceptions.
  */
-public final class ExceptionWrapper {
+public final class FunctionalConverter {
 
     private final BiFunction<String, Exception, RuntimeException> wrapping;
 
-    private ExceptionWrapper(final BiFunction<String, Exception, RuntimeException> wrapping) {
+    private FunctionalConverter(final BiFunction<String, Exception, RuntimeException> wrapping) {
         this.wrapping = wrapping;
     }
 
@@ -37,8 +36,8 @@ public final class ExceptionWrapper {
      * @param wrapping A {@link BiFunction} that returns a {@link RuntimeException} that uses a given {@link String}
      *                 as message and a given {@link Exception} as cause.
      */
-    public static ExceptionWrapper using(final BiFunction<String, Exception, RuntimeException> wrapping) {
-        return new ExceptionWrapper(wrapping);
+    public static FunctionalConverter using(final BiFunction<String, Exception, RuntimeException> wrapping) {
+        return new FunctionalConverter(wrapping);
     }
 
     private static XBiFunction<Void, Void, Void, ?> toXBiFunction(final XRunnable<?> xRunnable) {
