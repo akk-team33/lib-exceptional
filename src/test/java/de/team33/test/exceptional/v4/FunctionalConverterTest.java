@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import static de.team33.libs.exceptional.v4.FunctionalConverter.stdWrapping;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -29,9 +30,9 @@ public class FunctionalConverterTest {
     @Parameters(name = "{index}: {0} + {1}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {WrappedException.class, FunctionalConverter.using(WrappedException::new)},
-                {IllegalStateException.class, FunctionalConverter.using(IllegalStateException::new)},
-                {RuntimeException.class, FunctionalConverter.using(RuntimeException::new)}
+                {WrappedException.class, FunctionalConverter.using(stdWrapping(WrappedException::new))},
+                {IllegalStateException.class, FunctionalConverter.using(stdWrapping(IllegalStateException::new))},
+                {RuntimeException.class, FunctionalConverter.using(stdWrapping(RuntimeException::new))}
         });
     }
 

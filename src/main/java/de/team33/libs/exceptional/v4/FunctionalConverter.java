@@ -1,5 +1,7 @@
 package de.team33.libs.exceptional.v4;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -24,20 +26,33 @@ import de.team33.libs.exceptional.v4.functional.XSupplier;
  */
 public final class FunctionalConverter {
 
-    private final BiFunction<String, Exception, RuntimeException> wrapping;
+    private final Function<Exception, RuntimeException> wrapping;
 
-    private FunctionalConverter(final BiFunction<String, Exception, RuntimeException> wrapping) {
+    private FunctionalConverter(final Function<Exception, RuntimeException> wrapping) {
         this.wrapping = wrapping;
     }
 
     /**
      * Returns a new instance using a given wrapping method.
      *
-     * @param wrapping A {@link BiFunction} that returns a {@link RuntimeException} that uses a given {@link String}
-     *                 as message and a given {@link Exception} as cause.
+     * @see #stdWrapping(BiFunction)
      */
-    public static FunctionalConverter using(final BiFunction<String, Exception, RuntimeException> wrapping) {
+    public static FunctionalConverter using(final Function<Exception, RuntimeException> wrapping) {
         return new FunctionalConverter(wrapping);
+    }
+
+    /**
+     * Returns a wrapping method that uses the message of the original exception to create the wrapping exception.
+     *
+     * @see #using(Function)
+     */
+    public static Function<Exception, RuntimeException> stdWrapping(final BiFunction<String, Exception, RuntimeException> wrapping) {
+        return cause -> wrapping.apply(cause.getMessage(), cause);
+    }
+
+    private static <X extends RuntimeException> X wrap(final Throwable cause, final Class<X> xClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        final Constructor<X> constructor = xClass.getConstructor(String.class, Throwable.class);
+        return constructor.newInstance(cause.getMessage(), cause);
     }
 
     private static XBiFunction<Void, Void, Void, ?> toXBiFunction(final XRunnable<?> xRunnable) {
@@ -83,7 +98,7 @@ public final class FunctionalConverter {
         } catch (final RuntimeException caught) {
             throw caught;
         } catch (final Exception caught) {
-            throw wrapping.apply(caught.getMessage(), caught);
+            throw wrapping.apply(caught);
         }
     }
 
