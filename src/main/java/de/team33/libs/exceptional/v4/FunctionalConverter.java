@@ -1,15 +1,5 @@
 package de.team33.libs.exceptional.v4;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import de.team33.libs.exceptional.v4.functional.XBiConsumer;
 import de.team33.libs.exceptional.v4.functional.XBiFunction;
 import de.team33.libs.exceptional.v4.functional.XBiPredicate;
@@ -19,16 +9,26 @@ import de.team33.libs.exceptional.v4.functional.XPredicate;
 import de.team33.libs.exceptional.v4.functional.XRunnable;
 import de.team33.libs.exceptional.v4.functional.XSupplier;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 
 /**
  * A tool that can convert certain functional constructs that may throw checked exceptions (e.g. {@link XFunction})
  * into more common constructs (e.g. {@link Function}) that will wrap such exceptions in unchecked exceptions.
+ *
+ * @see FunctionalConversion
  */
 public final class FunctionalConverter {
 
-    private final Function<Exception, RuntimeException> wrapping;
+    private final Function<Throwable, RuntimeException> wrapping;
 
-    private FunctionalConverter(final Function<Exception, RuntimeException> wrapping) {
+    private FunctionalConverter(final Function<Throwable, RuntimeException> wrapping) {
         this.wrapping = wrapping;
     }
 
@@ -36,23 +36,84 @@ public final class FunctionalConverter {
      * Returns a new instance using a given wrapping method.
      *
      * @see #stdWrapping(BiFunction)
+     * @see #altWrapping(Function)
      */
-    public static FunctionalConverter using(final Function<Exception, RuntimeException> wrapping) {
+    public static FunctionalConverter using(final Function<Throwable, RuntimeException> wrapping) {
         return new FunctionalConverter(wrapping);
     }
 
     /**
-     * Returns a wrapping method that uses the message of the original exception to create the wrapping exception.
+     * Returns a standard wrapping method for {@link #using(Function)} that uses the
+     * {@link Exception#getMessage() message} of the original {@link Exception} to create the wrapping
+     * {@link RuntimeException}.
+     * <p>
+     * This is mainly intended to view a typical standard constructor of a {@link RuntimeException} that requires two
+     * parameters (message text and causing exception, e.g.
+     * {@link WrappedException#WrappedException(String, Throwable)}) as a {@link Function} in order to use it with
+     * {@link #using(Function)}.
+     * <p>
+     * The resulting function uses the message text of the causing exception unchanged as the message text of its
+     * resulting {@link RuntimeException}.
+     * <p>
+     * Example:
+     * <pre>
      *
-     * @see #using(Function)
+     * import static de.team33.libs.exceptional.v4.FunctionalConverter.stdWrapping;
+     * import static de.team33.libs.exceptional.v4.FunctionalConverter.using;
+     *
+     * public class MyClass {
+     *
+     *     private static final FunctionalConverter CONVERTER = using(stdWrapping(WrappedException::new));
+     *
+     *     // ...
+     * }
+     * </pre>
      */
-    public static Function<Exception, RuntimeException> stdWrapping(final BiFunction<String, Exception, RuntimeException> wrapping) {
+    public static Function<Throwable, RuntimeException> stdWrapping(
+            final BiFunction<String, Throwable, RuntimeException> wrapping) {
         return cause -> wrapping.apply(cause.getMessage(), cause);
     }
 
-    private static <X extends RuntimeException> X wrap(final Throwable cause, final Class<X> xClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Constructor<X> constructor = xClass.getConstructor(String.class, Throwable.class);
-        return constructor.newInstance(cause.getMessage(), cause);
+    /**
+     * Returns an alternative wrapping method for {@link #using(Function)} that uses the
+     * {@link Exception#getMessage() message} of the original {@link Exception} to create the wrapping
+     * {@link RuntimeException}.
+     * <p>
+     * This is mainly intended to view a typical standard constructor of a {@link RuntimeException} that requires a
+     * single string parameter (the detail message) as a {@link Function} in order to use it with
+     * {@link #using(Function)}.
+     * <p>
+     * The resulting function uses the message text of the causing exception unchanged as the message text of its
+     * resulting {@link RuntimeException} and then initializes the causing exception as its cause.
+     * <p>
+     * Example:
+     * <pre>
+     *
+     * import static de.team33.libs.exceptional.v4.FunctionalConverter.altWrapping;
+     * import static de.team33.libs.exceptional.v4.FunctionalConverter.using;
+     *
+     * public class MyConversion {
+     *
+     *     private static final FunctionalConverter CONVERTER = using(altWrapping(MyException::new));
+     *
+     *     // ...
+     *
+     *     public static class MyException extends RuntimeException {
+     *
+     *         public MyException(final String message) {
+     *             super(message);
+     *         }
+     *     }
+     * }
+     * </pre>
+     */
+    public static Function<Throwable, RuntimeException> altWrapping(
+            final Function<String, RuntimeException> wrapping) {
+        return cause -> {
+            final RuntimeException result = wrapping.apply(cause.getMessage());
+            result.initCause(cause);
+            return result;
+        };
     }
 
     private static XBiFunction<Void, Void, Void, ?> toXBiFunction(final XRunnable<?> xRunnable) {
@@ -151,7 +212,7 @@ public final class FunctionalConverter {
      * Wraps an {@link XBiPredicate} that may throw a checked exception as {@link BiPredicate} that,
      * when executed, wraps any occurring checked exception as a specific unchecked exception.
      */
-    public <T, U> BiPredicate<T, U> biPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
+    public final <T, U> BiPredicate<T, U> biPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
         final XBiFunction<T, U, Boolean, ?> xBiFunction = toXBiFunction(xBiPredicate);
         return (t, u) -> call(xBiFunction, t, u);
     }
