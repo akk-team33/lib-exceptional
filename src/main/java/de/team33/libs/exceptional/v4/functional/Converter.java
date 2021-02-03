@@ -109,40 +109,40 @@ public final class Converter {
         };
     }
 
-    private static XBiFunction<Void, Void, Void, ?> toXBiFunction(final XRunnable<?> xRunnable) {
+    private static XBiFunction<Void, Void, Void, ?> normalized(final XRunnable<?> xRunnable) {
         return (t, u) -> {
             xRunnable.run();
             return null;
         };
     }
 
-    private static <T> XBiFunction<T, Void, Void, ?> toXBiFunction(final XConsumer<T, ?> xConsumer) {
+    private static <T> XBiFunction<T, Void, Void, ?> normalized(final XConsumer<T, ?> xConsumer) {
         return (t, u) -> {
             xConsumer.accept(t);
             return null;
         };
     }
 
-    private static <T, U> XBiFunction<T, U, Void, ?> toXBiFunction(final XBiConsumer<T, U, ?> xBiConsumer) {
+    private static <T, U> XBiFunction<T, U, Void, ?> normalized(final XBiConsumer<T, U, ?> xBiConsumer) {
         return (t, u) -> {
             xBiConsumer.accept(t, u);
             return null;
         };
     }
 
-    private static <R> XBiFunction<Void, Void, R, ?> toXBiFunction(final XSupplier<R, ?> xSupplier) {
+    private static <R> XBiFunction<Void, Void, R, ?> normalized(final XSupplier<R, ?> xSupplier) {
         return (t, u) -> xSupplier.get();
     }
 
-    private static <T> XBiFunction<T, Void, Boolean, ?> toXBiFunction(final XPredicate<T, ?> xPredicate) {
+    private static <T> XBiFunction<T, Void, Boolean, ?> normalized(final XPredicate<T, ?> xPredicate) {
         return (t, u) -> xPredicate.test(t);
     }
 
-    private static <T, U> XBiFunction<T, U, Boolean, ?> toXBiFunction(final XBiPredicate<T, U, ?> xBiPredicate) {
+    private static <T, U> XBiFunction<T, U, Boolean, ?> normalized(final XBiPredicate<T, U, ?> xBiPredicate) {
         return xBiPredicate::test;
     }
 
-    private static <T, R> XBiFunction<T, Void, R, ?> toXBiFunction(final XFunction<T, R, ?> xFunction) {
+    private static <T, R> XBiFunction<T, Void, R, ?> normalized(final XFunction<T, R, ?> xFunction) {
         return (t, u) -> xFunction.apply(t);
     }
 
@@ -161,8 +161,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final Runnable runnable(final XRunnable<?> xRunnable) {
-        final XBiFunction<Void, Void, Void, ?> xBiFunction = toXBiFunction(xRunnable);
-        return () -> call(xBiFunction, null, null);
+        final XBiFunction<Void, Void, Void, ?> normal = normalized(xRunnable);
+        return () -> call(normal, null, null);
     }
 
     /**
@@ -170,8 +170,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final <T> Consumer<T> consumer(final XConsumer<T, ?> xConsumer) {
-        final XBiFunction<T, Void, Void, ?> xBiFunction = toXBiFunction(xConsumer);
-        return t -> call(xBiFunction, t, null);
+        final XBiFunction<T, Void, Void, ?> normal = normalized(xConsumer);
+        return t -> call(normal, t, null);
     }
 
     /**
@@ -179,8 +179,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final <T, U> BiConsumer<T, U> biConsumer(final XBiConsumer<T, U, ?> xBiConsumer) {
-        final XBiFunction<T, U, Void, ?> xBiFunction = toXBiFunction(xBiConsumer);
-        return (t, u) -> call(xBiFunction, t, u);
+        final XBiFunction<T, U, Void, ?> normal = normalized(xBiConsumer);
+        return (t, u) -> call(normal, t, u);
     }
 
     /**
@@ -188,8 +188,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final <R> Supplier<R> supplier(final XSupplier<R, ?> xSupplier) {
-        final XBiFunction<Void, Void, R, ?> xBiFunction = toXBiFunction(xSupplier);
-        return () -> call(xBiFunction, null, null);
+        final XBiFunction<Void, Void, R, ?> normal = normalized(xSupplier);
+        return () -> call(normal, null, null);
     }
 
     /**
@@ -197,8 +197,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final <T> Predicate<T> predicate(final XPredicate<T, ?> xPredicate) {
-        final XBiFunction<T, Void, Boolean, ?> xBiFunction = toXBiFunction(xPredicate);
-        return t -> call(xBiFunction, t, null);
+        final XBiFunction<T, Void, Boolean, ?> normal = normalized(xPredicate);
+        return t -> call(normal, t, null);
     }
 
     /**
@@ -206,8 +206,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as a specific unchecked exception.
      */
     public final <T, U> BiPredicate<T, U> biPredicate(final XBiPredicate<T, U, ?> xBiPredicate) {
-        final XBiFunction<T, U, Boolean, ?> xBiFunction = toXBiFunction(xBiPredicate);
-        return (t, u) -> call(xBiFunction, t, u);
+        final XBiFunction<T, U, Boolean, ?> normal = normalized(xBiPredicate);
+        return (t, u) -> call(normal, t, u);
     }
 
     /**
@@ -215,8 +215,8 @@ public final class Converter {
      * when executed, wraps any occurring checked exception as specific unchecked exception.
      */
     public final <T, R> Function<T, R> function(final XFunction<T, R, ?> xFunction) {
-        final XBiFunction<T, Void, R, ?> xBiFunction = toXBiFunction(xFunction);
-        return t -> call(xBiFunction, t, null);
+        final XBiFunction<T, Void, R, ?> normal = normalized(xFunction);
+        return t -> call(normal, t, null);
     }
 
     /**
