@@ -1,6 +1,6 @@
-package de.team33.libs.exceptional.v4;
+package de.team33.libs.exceptional.v4.functional;
 
-import de.team33.libs.exceptional.v4.functional.*;
+import de.team33.libs.exceptional.v4.WrappedException;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static de.team33.libs.exceptional.v4.Converter.using;
+import static de.team33.libs.exceptional.v4.functional.Converter.using;
 
 /**
  * A utility class that can convert certain functional constructs that may throw checked exceptions
