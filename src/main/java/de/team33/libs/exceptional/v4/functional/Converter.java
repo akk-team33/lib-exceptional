@@ -51,8 +51,8 @@ public final class Converter {
      * Example:
      * <pre>
      *
-     * import static de.team33.libs.exceptional.v4.FunctionalConverter.stdWrapping;
-     * import static de.team33.libs.exceptional.v4.FunctionalConverter.using;
+     * import static de.team33.libs.exceptional.v4.functional.Converter.stdWrapping;
+     * import static de.team33.libs.exceptional.v4.functional.Converter.using;
      *
      * public class MyClass {
      *
@@ -82,8 +82,8 @@ public final class Converter {
      * Example:
      * <pre>
      *
-     * import static de.team33.libs.exceptional.v4.FunctionalConverter.altWrapping;
-     * import static de.team33.libs.exceptional.v4.FunctionalConverter.using;
+     * import static de.team33.libs.exceptional.v4.functional.Converter.altWrapping;
+     * import static de.team33.libs.exceptional.v4.functional.Converter.using;
      *
      * public class MyConversion {
      *
