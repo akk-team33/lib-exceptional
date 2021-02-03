@@ -9,7 +9,7 @@ package de.team33.libs.exceptional.v4.functional;
 public interface XBiConsumer<T, U, X extends Exception> {
 
     /**
-     * Performs this operation on the given argument.
+     * Performs this operation on the given arguments.
      *
      * @throws X if so.
      * @see java.util.function.BiConsumer#accept(Object, Object)

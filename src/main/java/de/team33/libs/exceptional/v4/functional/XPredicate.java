@@ -9,7 +9,7 @@ package de.team33.libs.exceptional.v4.functional;
 public interface XPredicate<T, X extends Exception> {
 
     /**
-     * Performs this operation on the given argument.
+     * Performs this operation on the given argument and returns a {@code boolean} result.
      *
      * @throws X if so.
      * @see java.util.function.Predicate#test(Object)

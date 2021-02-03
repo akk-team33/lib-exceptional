@@ -10,19 +10,21 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static de.team33.libs.exceptional.v4.FunctionalConverter.stdWrapping;
-import static de.team33.libs.exceptional.v4.FunctionalConverter.using;
+import static de.team33.libs.exceptional.v4.Converter.using;
 
 /**
  * A utility class that can convert certain functional constructs that may throw checked exceptions
  * (e.g. {@link XFunction}) into more common constructs (e.g. {@link Function}) that will wrap such exceptions in
  * {@link WrappedException}s.
  *
- * @see FunctionalConverter
+ * @see Converter
  */
-public class FunctionalConversion {
+public final class Conversion {
 
-    private static final FunctionalConverter CONVERTER = using(stdWrapping(WrappedException::new));
+    private static final Converter CONVERTER = using(WrappedException::new);
+
+    private Conversion() {
+    }
 
     /**
      * Wraps an {@link XRunnable} that may throw a checked exception as {@link Runnable} that,

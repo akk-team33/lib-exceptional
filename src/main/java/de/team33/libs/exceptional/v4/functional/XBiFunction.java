@@ -9,7 +9,7 @@ package de.team33.libs.exceptional.v4.functional;
 public interface XBiFunction<T, U, R, X extends Exception> {
 
     /**
-     * Performs this operation on the given argument.
+     * Performs this operation on the given arguments and returns a result.
      *
      * @throws X if so.
      * @see java.util.function.BiFunction#apply(Object, Object)

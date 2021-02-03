@@ -22,13 +22,13 @@ import java.util.function.Supplier;
  * A tool that can convert certain functional constructs that may throw checked exceptions (e.g. {@link XFunction})
  * into more common constructs (e.g. {@link Function}) that will wrap such exceptions in unchecked exceptions.
  *
- * @see FunctionalConversion
+ * @see Conversion
  */
-public final class FunctionalConverter {
+public final class Converter {
 
     private final Function<Throwable, RuntimeException> wrapping;
 
-    private FunctionalConverter(final Function<Throwable, RuntimeException> wrapping) {
+    private Converter(final Function<Throwable, RuntimeException> wrapping) {
         this.wrapping = wrapping;
     }
 
@@ -38,8 +38,8 @@ public final class FunctionalConverter {
      * @see #stdWrapping(BiFunction)
      * @see #altWrapping(Function)
      */
-    public static FunctionalConverter using(final Function<Throwable, RuntimeException> wrapping) {
-        return new FunctionalConverter(wrapping);
+    public static Converter using(final Function<Throwable, RuntimeException> wrapping) {
+        return new Converter(wrapping);
     }
 
     /**
