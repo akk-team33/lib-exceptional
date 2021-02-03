@@ -31,9 +31,9 @@ public class ConverterTest {
     @Parameters(name = "{index}: {0} + {1}")
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {WrappedException.class, Converter.using(stdWrapping(WrappedException::new))},
+                {WrappedException.class, Converter.using(WrappedException::new)},
                 {IllegalStateException.class, Converter.using(altWrapping(IllegalStateException::new))},
-                {RuntimeException.class, Converter.using(RuntimeException::new)}
+                {RuntimeException.class, Converter.using(stdWrapping(RuntimeException::new))}
         });
     }
 
