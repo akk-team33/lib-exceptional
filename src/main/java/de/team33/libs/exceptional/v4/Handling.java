@@ -3,7 +3,9 @@ package de.team33.libs.exceptional.v4;
 import java.util.function.Function;
 
 /**
- * A tool that supports the differentiated handling of exceptions.
+ * A tool that supports the differentiated handling of an exception.
+ * <p>
+ * To get an Instance use {@link #of(Throwable)}.
  */
 public class Handling<T extends Throwable> {
 
@@ -16,7 +18,10 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * Initiates a {@link Handling} of the given {@code subject}.
+     * Returns a new instance to handle a given exception.
+     *
+     * @param subject the exception to be handled
+     * @param <T>     the type of the given exception
      */
     public static <T extends Throwable> Handling<T> of(final T subject) {
         return new Handling<>(subject);
@@ -29,13 +34,16 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * <p>Applies the given {@code mapping} to the {@linkplain #of(Throwable) associated subject} and throws the result
-     * if is it NOT {@code null}. Otherwise this {@link Handling} will be returned.</p>
+     * Applies a given {@link Function mapping} to the {@linkplain #of(Throwable) associated subject} and throws the
+     * result if is it NOT {@code null}. Otherwise this {@link Handling} will be returned.
      *
-     * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
-     * type, e.g. an {@link Exception}. At the same time, a suitable mapping to the respective exception can be
-     * applied with this variant.</p>
-     *
+     * @param mapping A {@link Function} that converts the {@linkplain #of(Throwable) associated subject} to a specific
+     *                type of exception to be thrown at that point, or returns {@code null} if handling should continue.
+     * @param <X>     The exception type that is intended as a result of the given mapping and that is thrown by this
+     *                method, if applicable.
+     * @return This handling, which can be continued if no exception has been thrown.
+     * @throws X The converted exception, if present.
+     * @see #throwMappedCause(Function)
      * @see #reThrowIf(Class)
      */
     public final <X extends Throwable> Handling<T> throwMapped(final Function<? super T, X> mapping) throws X {
@@ -44,12 +52,14 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * <p>Re-throws the {@linkplain #of(Throwable) associated subject} if it matches the given exception {@code type}.
-     * Otherwise this {@link Handling} will be returned.</p>
+     * Re-throws the {@linkplain #of(Throwable) associated subject} if it matches the given exception {@code type}.
+     * Otherwise this {@link Handling} will be returned.
      *
-     * <p>This method is used to re-specify an exception. For example, if an exception was caught as a very common
-     * type, e.g. an {@link Exception}.</p>
-     *
+     * @param type The {@link Class} that represents the type of exception that is expected.
+     * @param <X>  The type of exception that is expected and, if applicable, thrown by this method.
+     * @return This handling, which can be continued if no exception has been thrown.
+     * @throws X the {@linkplain #of(Throwable) associated subject}, cast to the expected type, if applicable.
+     * @see #reThrowCauseIf(Class)
      * @see #throwMapped(Function)
      */
     public final <X extends Throwable> Handling<T> reThrowIf(final Class<X> type) throws X {
@@ -58,15 +68,18 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * <p>Applies the given {@code mapping} to the {@link Throwable#getCause() cause} of the
+     * Applies a given {@link Function mapping} to the {@link Throwable#getCause() cause} of the
      * {@linkplain #of(Throwable) associated subject} and throws the result if is it NOT {@code null}.
-     * Otherwise this {@link Handling} will be returned.</p>
+     * Otherwise this {@link Handling} will be returned.
      *
-     * <p>This method is used to bring the cause of an exception back to the foreground. For example,
-     * if an exception was previously caught and encapsulated in another exception for technical reasons,
-     * e.g. a {@link RuntimeException}. At the same time, a suitable mapping to the respective exception can be
-     * applied with this variant.</p>
-     *
+     * @param mapping A {@link Function} that converts the {@link Throwable#getCause() cause} of the
+     *                {@linkplain #of(Throwable) associated subject} to a specific type of exception to be thrown at
+     *                that point, or returns {@code null} if handling should continue.
+     * @param <X>     The exception type that is intended as a result of the given mapping and that is thrown by this
+     *                method, if applicable.
+     * @return This handling, which can be continued if no exception has been thrown.
+     * @throws X The converted exception, if present.
+     * @see #throwMapped(Function)
      * @see #reThrowCauseIf(Class)
      */
     public final <X extends Throwable> Handling<T> throwMappedCause(final Function<Throwable, X> mapping) throws X {
@@ -75,13 +88,14 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * <p>Re-throws the {@link Throwable#getCause() cause} of the {@linkplain #of(Throwable) associated subject}
-     * if it matches the given exception {@code type}. Otherwise this {@link Handling} will be returned.</p>
+     * Re-throws the {@link Throwable#getCause() cause} of the {@linkplain #of(Throwable) associated subject}
+     * if it matches the given exception {@code type}. Otherwise this {@link Handling} will be returned.
      *
-     * <p>This method is used to bring the cause of an exception back to the foreground. For example,
-     * if an exception was previously caught and encapsulated in another exception for technical reasons,
-     * e.g. a {@link RuntimeException}.</p>
-     *
+     * @param type The {@link Class} that represents the type of exception that is expected.
+     * @param <X>  The type of exception that is expected and, if applicable, thrown by this method.
+     * @return This handling, which can be continued if no exception has been thrown.
+     * @throws X the {@linkplain #of(Throwable) associated subject}, cast to the expected type, if applicable.
+     * @see #reThrowIf(Class)
      * @see #throwMappedCause(Function)
      */
     public final <X extends Throwable> Handling<T> reThrowCauseIf(final Class<X> type) throws X {
