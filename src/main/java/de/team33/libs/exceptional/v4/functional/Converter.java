@@ -1,6 +1,7 @@
 package de.team33.libs.exceptional.v4.functional;
 
 import de.team33.libs.exceptional.v4.WrappedException;
+import de.team33.libs.exceptional.v4.Wrapping;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -28,85 +29,31 @@ public final class Converter {
     /**
      * Returns a new instance using a given wrapping method.
      *
-     * @see #stdWrapping(BiFunction)
-     * @see #altWrapping(Function)
+     * @see Wrapping#normal(BiFunction)
+     * @see Wrapping#normal(String, BiFunction)
+     * @see Wrapping#varying(Function)
+     * @see Wrapping#varying(String, Function)
      */
     public static Converter using(final Function<Throwable, RuntimeException> wrapping) {
         return new Converter(wrapping);
     }
 
     /**
-     * Returns a standard wrapping method for {@link #using(Function)} that uses the
-     * {@link Exception#getMessage() message} of the original {@link Exception} to create the wrapping
-     * {@link RuntimeException}.
-     * <p>
-     * This is mainly intended to view a typical standard constructor of a {@link RuntimeException} that requires two
-     * parameters (message text and causing exception, e.g.
-     * {@link WrappedException#WrappedException(String, Throwable)}) as a {@link Function} in order to use it with
-     * {@link #using(Function)}.
-     * <p>
-     * The resulting function uses the message text of the causing exception unchanged as the message text of its
-     * resulting {@link RuntimeException}.
-     * <p>
-     * Example:
-     * <pre>
-     *
-     * import static de.team33.libs.exceptional.v4.functional.Converter.stdWrapping;
-     * import static de.team33.libs.exceptional.v4.functional.Converter.using;
-     *
-     * public class MyClass {
-     *
-     *     private static final FunctionalConverter CONVERTER = using(stdWrapping(WrappedException::new));
-     *
-     *     // ...
-     * }
-     * </pre>
+     * @deprecated Use {@link Wrapping#normal(BiFunction)} instead!
      */
+    @Deprecated
     public static Function<Throwable, RuntimeException> stdWrapping(
             final BiFunction<String, Throwable, RuntimeException> wrapping) {
-        return cause -> wrapping.apply(cause.getMessage(), cause);
+        return Wrapping.normal(wrapping);
     }
 
     /**
-     * Returns an alternative wrapping method for {@link #using(Function)} that uses the
-     * {@link Exception#getMessage() message} of the original {@link Exception} to create the wrapping
-     * {@link RuntimeException}.
-     * <p>
-     * This is mainly intended to view a typical standard constructor of a {@link RuntimeException} that requires a
-     * single string parameter (the detail message) as a {@link Function} in order to use it with
-     * {@link #using(Function)}.
-     * <p>
-     * The resulting function uses the message text of the causing exception unchanged as the message text of its
-     * resulting {@link RuntimeException} and then initializes the causing exception as its cause.
-     * <p>
-     * Example:
-     * <pre>
-     *
-     * import static de.team33.libs.exceptional.v4.functional.Converter.altWrapping;
-     * import static de.team33.libs.exceptional.v4.functional.Converter.using;
-     *
-     * public class MyConversion {
-     *
-     *     private static final FunctionalConverter CONVERTER = using(altWrapping(MyException::new));
-     *
-     *     // ...
-     *
-     *     public static class MyException extends RuntimeException {
-     *
-     *         public MyException(final String message) {
-     *             super(message);
-     *         }
-     *     }
-     * }
-     * </pre>
+     * @deprecated Use {@link Wrapping#varying(Function)} instead!
      */
+    @Deprecated
     public static Function<Throwable, RuntimeException> altWrapping(
             final Function<String, RuntimeException> wrapping) {
-        return cause -> {
-            final RuntimeException result = wrapping.apply(cause.getMessage());
-            result.initCause(cause);
-            return result;
-        };
+        return Wrapping.varying(wrapping);
     }
 
     private static XBiFunction<Void, Void, Void, ?> normalized(final XRunnable<?> xRunnable) {

@@ -1,5 +1,6 @@
 package de.team33.test.exceptional.v4.functional;
 
+import de.team33.libs.exceptional.v4.Wrapping;
 import de.team33.libs.exceptional.v4.functional.Converter;
 import de.team33.libs.exceptional.v4.WrappedException;
 import org.junit.Test;
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static de.team33.libs.exceptional.v4.functional.Converter.altWrapping;
-import static de.team33.libs.exceptional.v4.functional.Converter.stdWrapping;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -32,8 +31,8 @@ public class ConverterTest {
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {WrappedException.class, Converter.using(WrappedException::new)},
-                {IllegalStateException.class, Converter.using(altWrapping(IllegalStateException::new))},
-                {RuntimeException.class, Converter.using(stdWrapping(RuntimeException::new))}
+                {IllegalStateException.class, Converter.using(Wrapping.normal(IllegalStateException::new))},
+                {RuntimeException.class, Converter.using(Wrapping.varying(RuntimeException::new))}
         });
     }
 

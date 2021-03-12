@@ -124,7 +124,7 @@ public class HandlingTest {
                                                                      .filter(equalsMessage("SubExceptionC"))
                                                                      .map(SubExceptionC::new)
                                                                      .orElse(null))
-                                  .mappedCause(Wrapping.normal("unexpected", ExpectationException::new));
+                                  .mappedCause(Wrapping.varying("unexpected", ExpectationException::new));
                 }
             } catch (final SubExceptionA caught) {
                 assertSame(subExceptionA, newException);
