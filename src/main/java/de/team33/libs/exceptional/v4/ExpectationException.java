@@ -23,6 +23,6 @@ public class ExpectationException extends RuntimeException {
      * Initializes a new instance with the given cause and its {@link Throwable#getMessage() message}.
      */
     public ExpectationException(final Throwable cause) {
-        super(cause.getMessage(), cause);
+        super(cause);
     }
 }

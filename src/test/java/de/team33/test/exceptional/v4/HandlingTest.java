@@ -2,6 +2,7 @@ package de.team33.test.exceptional.v4;
 
 import de.team33.libs.exceptional.v4.ExpectationException;
 import de.team33.libs.exceptional.v4.Handling;
+import de.team33.libs.exceptional.v4.Wrapping;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -123,7 +124,7 @@ public class HandlingTest {
                                                                      .filter(equalsMessage("SubExceptionC"))
                                                                      .map(SubExceptionC::new)
                                                                      .orElse(null))
-                                  .mappedCause(cause -> new ExpectationException("unexpected", cause));
+                                  .mappedCause(Wrapping.normal("unexpected", ExpectationException::new));
                 }
             } catch (final SubExceptionA caught) {
                 assertSame(subExceptionA, newException);
@@ -134,6 +135,7 @@ public class HandlingTest {
             } catch (final ExpectationException caught) {
                 assertSame(ioException, newException);
                 assertEquals("unexpected", caught.getMessage());
+                assertEquals(IOException.class, caught.getCause().getClass());
             }
         }
     }
