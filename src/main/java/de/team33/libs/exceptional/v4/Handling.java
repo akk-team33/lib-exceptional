@@ -104,9 +104,23 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * Returns the associated {@code subject}.
+     * Returns the {@linkplain #of(Throwable) associated subject}.
      */
     public final T fallback() {
         return subject;
+    }
+
+    /**
+     * Returns the {@linkplain #of(Throwable) associated subject} wrapped in an {@link ExpectationException}.
+     */
+    public final ExpectationException toExpectationException() {
+        return new ExpectationException(subject);
+    }
+
+    /**
+     * Returns the {@linkplain #of(Throwable) associated subject} wrapped in an {@link ExpectationException}.
+     */
+    public final ExpectationException toExpectationException(final String message) {
+        return new ExpectationException(message, subject);
     }
 }
