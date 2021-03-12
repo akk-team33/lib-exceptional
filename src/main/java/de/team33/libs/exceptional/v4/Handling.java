@@ -111,16 +111,18 @@ public class Handling<T extends Throwable> {
     }
 
     /**
-     * Returns the {@linkplain #of(Throwable) associated subject} wrapped in an {@link ExpectationException}.
+     * Applies a given {@link Function mapping} to the {@linkplain #of(Throwable) associated subject} and returns the
+     * result.
      */
-    public final ExpectationException toExpectationException() {
-        return new ExpectationException(subject);
+    public final <X extends Throwable> X mapped(final Function<? super T, X> mapping) {
+        return mapping.apply(subject);
     }
 
     /**
-     * Returns the {@linkplain #of(Throwable) associated subject} wrapped in an {@link ExpectationException}.
+     * Applies a given {@link Function mapping} to the {@link Throwable#getCause() cause} of the
+     * {@linkplain #of(Throwable) associated subject} and returns the result.
      */
-    public final ExpectationException toExpectationException(final String message) {
-        return new ExpectationException(message, subject);
+    public final <X extends Throwable> X mappedCause(final Function<Throwable, X> mapping) {
+        return mapping.apply(cause);
     }
 }

@@ -1,5 +1,6 @@
 package de.team33.test.exceptional.v4;
 
+import de.team33.libs.exceptional.v4.ExpectationException;
 import de.team33.libs.exceptional.v4.Handling;
 import org.junit.Test;
 
@@ -10,10 +11,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
-@SuppressWarnings({"MultipleTopLevelClassesInFile", "NestedTryStatement"})
 public class HandlingTest {
 
     private static <X extends Exception> void doThrow(final Supplier<X> supplier) throws X {
@@ -51,7 +52,6 @@ public class HandlingTest {
                                                             .filter(equalsMessage("SubExceptionC"))
                                                             .map(SubExceptionC::new)
                                                             .orElse(null));
-                    // No handling took place. This is expected only if ...
                     assertSame(newIOException, newException);
                 }
             } catch (final SubExceptionA caught) {
@@ -78,11 +78,11 @@ public class HandlingTest {
                     doThrow(newException);
                     fail("unexpected: no exception thrown");
                 } catch (final Exception caught) {
-                    Handling.of(caught)
-                            .reThrowIf(SubExceptionA.class)
-                            .reThrowIf(SubExceptionB.class)
-                            .reThrowIf(SubExceptionC.class);
-                    assertSame(newIOException, newException);
+                    throw Handling.of(caught)
+                                  .reThrowIf(SubExceptionA.class)
+                                  .reThrowIf(SubExceptionB.class)
+                                  .reThrowIf(SubExceptionC.class)
+                                  .mapped(ExpectationException::new);
                 }
             } catch (final SubExceptionA caught) {
                 assertSame(newSubExceptionA, newException);
@@ -90,6 +90,8 @@ public class HandlingTest {
                 assertSame(newSubExceptionB, newException);
             } catch (final SubExceptionC caught) {
                 assertSame(newSubExceptionC, newException);
+            } catch (final ExpectationException caught) {
+                assertSame(newIOException, newException);
             }
         }
     }
@@ -108,20 +110,20 @@ public class HandlingTest {
                     doThrow(newException);
                     fail("unexpected: no exception thrown");
                 } catch (final RuntimeException caught) {
-                    Handling.of(caught)
-                            .throwMappedCause(cause -> Optional.of(cause)
-                                                               .filter(equalsMessage("SubExceptionA"))
-                                                               .map(SubExceptionA::new)
-                                                               .orElse(null))
-                            .throwMappedCause(cause -> Optional.of(cause)
-                                                               .filter(equalsMessage("SubExceptionB"))
-                                                               .map(SubExceptionB::new)
-                                                               .orElse(null))
-                            .throwMappedCause(cause -> Optional.of(cause)
-                                                               .filter(equalsMessage("SubExceptionC"))
-                                                               .map(SubExceptionC::new)
-                                                               .orElse(null));
-                    assertSame(ioException, newException);
+                    throw Handling.of(caught)
+                                  .throwMappedCause(cause -> Optional.of(cause)
+                                                                     .filter(equalsMessage("SubExceptionA"))
+                                                                     .map(SubExceptionA::new)
+                                                                     .orElse(null))
+                                  .throwMappedCause(cause -> Optional.of(cause)
+                                                                     .filter(equalsMessage("SubExceptionB"))
+                                                                     .map(SubExceptionB::new)
+                                                                     .orElse(null))
+                                  .throwMappedCause(cause -> Optional.of(cause)
+                                                                     .filter(equalsMessage("SubExceptionC"))
+                                                                     .map(SubExceptionC::new)
+                                                                     .orElse(null))
+                                  .mappedCause(cause -> new ExpectationException("unexpected", cause));
                 }
             } catch (final SubExceptionA caught) {
                 assertSame(subExceptionA, newException);
@@ -129,12 +131,15 @@ public class HandlingTest {
                 assertSame(subExceptionB, newException);
             } catch (final SubExceptionC caught) {
                 assertSame(subExceptionC, newException);
+            } catch (final ExpectationException caught) {
+                assertSame(ioException, newException);
+                assertEquals("unexpected", caught.getMessage());
             }
         }
     }
 
     @Test
-    public final void reThrowCauseIf() {
+    public final void reThrowCauseIf() throws Throwable {
         final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException(new SubExceptionA());
         final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException(new SubExceptionB());
         final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException(new SubExceptionC());
@@ -147,11 +152,11 @@ public class HandlingTest {
                     doThrow(newException);
                     fail("unexpected: no exception thrown");
                 } catch (final RuntimeException caught) {
-                    Handling.of(caught)
-                            .reThrowCauseIf(SubExceptionA.class)
-                            .reThrowCauseIf(SubExceptionB.class)
-                            .reThrowCauseIf(SubExceptionC.class);
-                    assertSame(newIOException, newException);
+                    throw Handling.of(caught)
+                                  .reThrowCauseIf(SubExceptionA.class)
+                                  .reThrowCauseIf(SubExceptionB.class)
+                                  .reThrowCauseIf(SubExceptionC.class)
+                                  .fallback().getCause();
                 }
             } catch (final SubExceptionA caught) {
                 assertSame(newSubExceptionA, newException);
@@ -159,6 +164,8 @@ public class HandlingTest {
                 assertSame(newSubExceptionB, newException);
             } catch (final SubExceptionC caught) {
                 assertSame(newSubExceptionC, newException);
+            } catch (final IOException caught) {
+                assertSame(newException, newException);
             }
         }
     }
