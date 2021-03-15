@@ -1,210 +1,177 @@
 package de.team33.test.exceptional.v4;
 
-import de.team33.libs.exceptional.v4.ExpectationException;
 import de.team33.libs.exceptional.v4.Handling;
-import de.team33.libs.exceptional.v4.Wrapping;
+import de.team33.libs.exceptional.v4.WrappedException;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+@SuppressWarnings({"NestedTryStatement", "ThrowCaughtLocally"})
 public class HandlingTest {
+
+    public static final String EXPECTED_AN_EXCEPTION = "It is expected that an exception was thrown previously";
+    public static final List<Exception> EXCEPTION_LIST = Arrays.asList(
+            new IOException(), new SQLException(), new IllegalArgumentException(), new IllegalStateException()
+    );
 
     private static <X extends Exception> void doThrow(final Supplier<X> supplier) throws X {
         throw supplier.get();
     }
 
-    private static <T extends Throwable> Predicate<T> equalsMessage(final String message) {
-        return subject -> message.equals(subject.getMessage());
+    private static <X extends Exception> Function<Exception, X> causeWhen(final Class<X> xClass) {
+        return caught -> Optional.ofNullable(caught.getCause())
+                                 .filter(xClass::isInstance)
+                                 .map(xClass::cast)
+                                 .orElse(null);
+    }
+
+    private static <X extends Exception> Function<Throwable, X> when(final Class<X> xClass) {
+        return cause -> Optional.ofNullable(cause)
+                                .filter(xClass::isInstance)
+                                .map(xClass::cast)
+                                .orElse(null);
     }
 
     @Test
-    public final void throwMapped() {
-        final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException("SubExceptionA");
-        final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException("SubExceptionB");
-        final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException("SubExceptionC");
-        final Supplier<RuntimeException> newIOException = () -> new RuntimeException("IOException");
-        final List<Supplier<RuntimeException>> newExceptionList = Arrays.asList(
-                newSubExceptionA, newSubExceptionB, newSubExceptionC, newIOException);
-        for (final Supplier<RuntimeException> newException : newExceptionList) {
+    public final void reThrowCauseIf() {
+        for (final Exception exception : EXCEPTION_LIST) {
             try {
                 try {
-                    doThrow(newException);
-                    fail("unexpected: no exception thrown");
-                } catch (final RuntimeException caught) {
+                    doThrow(() -> new WrappedException(exception));
+                    fail(EXPECTED_AN_EXCEPTION);
+                } catch (final WrappedException caught) {
                     Handling.of(caught)
-                            .throwMapped(subject -> Optional.of(subject)
-                                                            .filter(equalsMessage("SubExceptionA"))
-                                                            .map(SubExceptionA::new)
-                                                            .orElse(null))
-                            .throwMapped(subject -> Optional.of(subject)
-                                                            .filter(equalsMessage("SubExceptionB"))
-                                                            .map(SubExceptionB::new)
-                                                            .orElse(null))
-                            .throwMapped(subject -> Optional.of(subject)
-                                                            .filter(equalsMessage("SubExceptionC"))
-                                                            .map(SubExceptionC::new)
-                                                            .orElse(null));
-                    assertSame(newIOException, newException);
+                            .reThrowCauseIf(IOException.class)
+                            .reThrowCauseIf(SQLException.class)
+                            .reThrowCauseIf(IllegalArgumentException.class)
+                            .reThrowCauseIf(IllegalStateException.class);
+                    fail(EXPECTED_AN_EXCEPTION);
                 }
-            } catch (final SubExceptionA caught) {
-                assertSame(newSubExceptionA, newException);
-            } catch (final SubExceptionB caught) {
-                assertSame(newSubExceptionB, newException);
-            } catch (final SubExceptionC caught) {
-                assertSame(newSubExceptionC, newException);
+            } catch (final IOException caught) {
+                assertSame(EXCEPTION_LIST.get(0), caught);
+            } catch (final SQLException caught) {
+                assertSame(EXCEPTION_LIST.get(1), caught);
+            } catch (final IllegalArgumentException caught) {
+                assertSame(EXCEPTION_LIST.get(2), caught);
+            } catch (final IllegalStateException caught) {
+                assertSame(EXCEPTION_LIST.get(3), caught);
+            }
+        }
+    }
+
+    @Deprecated
+    @Test
+    public final void reThrowIf() {
+        for (final Exception exception : EXCEPTION_LIST) {
+            try {
+                try {
+                    doThrow(() -> exception);
+                    fail(EXPECTED_AN_EXCEPTION);
+                } catch (final Exception caught) {
+                    Handling.of(caught)
+                            .reThrowIf(IOException.class)
+                            .reThrowIf(SQLException.class)
+                            .reThrowIf(IllegalArgumentException.class)
+                            .reThrowIf(IllegalStateException.class);
+                    fail(EXPECTED_AN_EXCEPTION);
+                }
+            } catch (final IOException caught) {
+                assertSame(EXCEPTION_LIST.get(0), caught);
+            } catch (final SQLException caught) {
+                assertSame(EXCEPTION_LIST.get(1), caught);
+            } catch (final IllegalArgumentException caught) {
+                assertSame(EXCEPTION_LIST.get(2), caught);
+            } catch (final IllegalStateException caught) {
+                assertSame(EXCEPTION_LIST.get(3), caught);
             }
         }
     }
 
     @Test
-    public final void reThrowIf() {
-        final Supplier<Exception> newSubExceptionA = SubExceptionA::new;
-        final Supplier<Exception> newSubExceptionB = SubExceptionB::new;
-        final Supplier<Exception> newSubExceptionC = SubExceptionC::new;
-        final Supplier<Exception> newIOException = IOException::new;
-        final List<Supplier<Exception>> newExceptionList = Arrays.asList(
-                newSubExceptionA, newSubExceptionB, newSubExceptionC, newIOException);
-        for (final Supplier<Exception> newException : newExceptionList) {
+    public final void throwMapped() {
+        for (final Exception exception : EXCEPTION_LIST) {
             try {
                 try {
-                    doThrow(newException);
-                    fail("unexpected: no exception thrown");
-                } catch (final Exception caught) {
-                    throw Handling.of(caught)
-                                  .reThrowIf(SubExceptionA.class)
-                                  .reThrowIf(SubExceptionB.class)
-                                  .reThrowIf(SubExceptionC.class)
-                                  .mapped(ExpectationException::new);
+                    doThrow(() -> new WrappedException(exception));
+                    fail(EXPECTED_AN_EXCEPTION);
+                } catch (final WrappedException caught) {
+                    Handling.of(caught)
+                            .throwMapped(causeWhen(IOException.class))
+                            .throwMapped(causeWhen(SQLException.class))
+                            .throwMapped(causeWhen(IllegalArgumentException.class))
+                            .throwMapped(causeWhen(IllegalStateException.class));
+                    fail(EXPECTED_AN_EXCEPTION);
                 }
-            } catch (final SubExceptionA caught) {
-                assertSame(newSubExceptionA, newException);
-            } catch (final SubExceptionB caught) {
-                assertSame(newSubExceptionB, newException);
-            } catch (final SubExceptionC caught) {
-                assertSame(newSubExceptionC, newException);
-            } catch (final ExpectationException caught) {
-                assertSame(newIOException, newException);
+            } catch (final IOException caught) {
+                assertSame(EXCEPTION_LIST.get(0), caught);
+            } catch (final SQLException caught) {
+                assertSame(EXCEPTION_LIST.get(1), caught);
+            } catch (final IllegalArgumentException caught) {
+                assertSame(EXCEPTION_LIST.get(2), caught);
+            } catch (final IllegalStateException caught) {
+                assertSame(EXCEPTION_LIST.get(3), caught);
             }
         }
     }
 
     @Test
     public final void throwMappedCause() {
-        final Supplier<RuntimeException> subExceptionA = () -> new RuntimeException(new IOException("SubExceptionA"));
-        final Supplier<RuntimeException> subExceptionB = () -> new RuntimeException(new IOException("SubExceptionB"));
-        final Supplier<RuntimeException> subExceptionC = () -> new RuntimeException(new IOException("SubExceptionC"));
-        final Supplier<RuntimeException> ioException = () -> new RuntimeException(new IOException());
-        final List<Supplier<RuntimeException>> newExceptionList = Arrays.asList(
-                subExceptionA, subExceptionB, subExceptionC, ioException);
-        for (final Supplier<RuntimeException> newException : newExceptionList) {
+        for (final Exception exception : EXCEPTION_LIST) {
             try {
                 try {
-                    doThrow(newException);
-                    fail("unexpected: no exception thrown");
-                } catch (final RuntimeException caught) {
-                    throw Handling.of(caught)
-                                  .throwMappedCause(cause -> Optional.of(cause)
-                                                                     .filter(equalsMessage("SubExceptionA"))
-                                                                     .map(SubExceptionA::new)
-                                                                     .orElse(null))
-                                  .throwMappedCause(cause -> Optional.of(cause)
-                                                                     .filter(equalsMessage("SubExceptionB"))
-                                                                     .map(SubExceptionB::new)
-                                                                     .orElse(null))
-                                  .throwMappedCause(cause -> Optional.of(cause)
-                                                                     .filter(equalsMessage("SubExceptionC"))
-                                                                     .map(SubExceptionC::new)
-                                                                     .orElse(null))
-                                  .mappedCause(Wrapping.varying("unexpected", ExpectationException::new));
+                    doThrow(() -> new WrappedException(exception));
+                    fail(EXPECTED_AN_EXCEPTION);
+                } catch (final WrappedException caught) {
+                    Handling.of(caught)
+                            .throwMappedCause(when(IOException.class))
+                            .throwMappedCause(when(SQLException.class))
+                            .throwMappedCause(when(IllegalArgumentException.class))
+                            .throwMappedCause(when(IllegalStateException.class));
+                    fail(EXPECTED_AN_EXCEPTION);
                 }
-            } catch (final SubExceptionA caught) {
-                assertSame(subExceptionA, newException);
-            } catch (final SubExceptionB caught) {
-                assertSame(subExceptionB, newException);
-            } catch (final SubExceptionC caught) {
-                assertSame(subExceptionC, newException);
-            } catch (final ExpectationException caught) {
-                assertSame(ioException, newException);
-                assertEquals("unexpected", caught.getMessage());
-                assertEquals(IOException.class, caught.getCause().getClass());
+            } catch (final IOException caught) {
+                assertSame(EXCEPTION_LIST.get(0), caught);
+            } catch (final SQLException caught) {
+                assertSame(EXCEPTION_LIST.get(1), caught);
+            } catch (final IllegalArgumentException caught) {
+                assertSame(EXCEPTION_LIST.get(2), caught);
+            } catch (final IllegalStateException caught) {
+                assertSame(EXCEPTION_LIST.get(3), caught);
             }
         }
     }
 
     @Test
-    public final void reThrowCauseIf() throws Throwable {
-        final Supplier<RuntimeException> newSubExceptionA = () -> new RuntimeException(new SubExceptionA());
-        final Supplier<RuntimeException> newSubExceptionB = () -> new RuntimeException(new SubExceptionB());
-        final Supplier<RuntimeException> newSubExceptionC = () -> new RuntimeException(new SubExceptionC());
-        final Supplier<RuntimeException> newIOException = () -> new RuntimeException(new IOException());
-        final List<Supplier<RuntimeException>> newExceptionList = Arrays.asList(
-                newSubExceptionA, newSubExceptionB, newSubExceptionC, newIOException);
-        for (final Supplier<RuntimeException> newException : newExceptionList) {
-            try {
-                try {
-                    doThrow(newException);
-                    fail("unexpected: no exception thrown");
-                } catch (final RuntimeException caught) {
-                    throw Handling.of(caught)
-                                  .reThrowCauseIf(SubExceptionA.class)
-                                  .reThrowCauseIf(SubExceptionB.class)
-                                  .reThrowCauseIf(SubExceptionC.class)
-                                  .fallback().getCause();
-                }
-            } catch (final SubExceptionA caught) {
-                assertSame(newSubExceptionA, newException);
-            } catch (final SubExceptionB caught) {
-                assertSame(newSubExceptionB, newException);
-            } catch (final SubExceptionC caught) {
-                assertSame(newSubExceptionC, newException);
-            } catch (final IOException caught) {
-                assertSame(newException, newException);
-            }
-        }
+    public final void fallback() {
+        final IOException original = new IOException();
+        final IOException result = Handling.of(original)
+                                           .fallback();
+        assertSame(original, result);
     }
 
-    static class SuperException extends Exception {
-        SuperException() {
-        }
-
-        SuperException(final Throwable cause) {
-            super(cause);
-        }
+    @Test
+    public final void mapped() {
+        final IOException original = new IOException();
+        final IOException result = Handling.of(original)
+                                           .mapped(Function.identity());
+        assertSame(original, result);
     }
 
-    static class SubExceptionA extends SuperException {
-        SubExceptionA() {
-        }
-
-        SubExceptionA(final Throwable cause) {
-            super(cause);
-        }
-    }
-
-    static class SubExceptionB extends SuperException {
-        SubExceptionB() {
-        }
-
-        SubExceptionB(final Throwable cause) {
-            super(cause);
-        }
-    }
-
-    static class SubExceptionC extends SuperException {
-        SubExceptionC() {
-        }
-
-        SubExceptionC(final Throwable cause) {
-            super(cause);
-        }
+    @Test
+    public final void mappedCause() {
+        final IOException original = new IOException();
+        final Throwable result = Handling.of(new IllegalStateException(original))
+                                         .mappedCause(Function.identity());
+        assertSame(original, result);
     }
 }
